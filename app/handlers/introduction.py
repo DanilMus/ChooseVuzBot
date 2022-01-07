@@ -1,12 +1,12 @@
 from aiogram import types, Dispatcher
-from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher.storage import FSMContext
-from aiogram.dispatcher.filters.state import State, StatesGroup
 
-class BeginingState(StatesGroup):
-    waiting_start = State()
+from app.states import CheckState
 
-async def begining(message: types.Message, state:FSMContext):
+from asyncio import sleep
+
+# самое начало, вводит пользователя в курс дела
+async def begining(message: types.Message, state: FSMContext):
     await state.finish()
 
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard= True)
@@ -24,13 +24,14 @@ async def begining(message: types.Message, state:FSMContext):
         reply_markup= keyboard
     )
 
-    await BeginingState.waiting_start.set()
+    await CheckState.waiting_for_after_begining.set()
 
 
+# дает пользовтелю инструкции
 async def after_begining(message: types.Message, state: FSMContext):
-    if message.text != 'Погнали':
-        return
-        
+    await message.answer("Окей", reply_markup= types.ReplyKeyboardRemove())
+    await sleep(0.2)
+
     keyboard_inline = types.InlineKeyboardMarkup()
     keyboard_inline.add(types.InlineKeyboardButton(
         text= 'Посмотреть ВУЗы в базе',
@@ -43,13 +44,19 @@ async def after_begining(message: types.Message, state: FSMContext):
         'С этих 3-х сайтов:\n'
         'https://tabiturient.ru\n'
         'https://vuzopedia.ru\n'
-        'https://www.ucheba.ru/for-abiturients/vuz',
-        reply_markup= keyboard_inline
+        'https://ucheba.ru/for-abiturients/vuz',
+        reply_markup= keyboard_inline,
+        disable_web_page_preview= True
     )
+    await sleep(0.2)
+    await message.answer('Когда закончишь указывать введи команду /finish1.')
 
-    await state.finish()
+    await state.update_data(chosen_vuzes_in_base = [])
+    await state.update_data(chosen_vuzes = [])
+    await CheckState.waiting_for_put_vuz_in_mem.set()
 
 
-def register_begining(dp: Dispatcher):
+
+def register_introduction(dp: Dispatcher):
     dp.register_message_handler(begining, commands= 'start', state= '*')
-    dp.register_message_handler(after_begining)
+    dp.register_message_handler(after_begining, state= CheckState.waiting_for_after_begining)

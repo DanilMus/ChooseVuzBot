@@ -7,18 +7,22 @@ from aiogram import Bot, Dispatcher
 from aiogram.types import BotCommand
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 
-from app.handlers.choose_universities import register_select_vuz_func
-from app.handlers.begining import register_begining
+from app.handlers.introduction import register_introduction
+from app.handlers.choose_universities import register_choose_vuz
+from app.handlers.choose_subjects import register_choose_subjects
+
 
 logger = logging.getLogger(__name__)
 
 # предложение выбора команд на выбор
 async def set_commands(bot: Bot):
-    command = [
+    commands = [
         BotCommand(command='/start', description='Начало работы'),
-        BotCommand(command='/finish', description='Конец выбора ВУЗов'),
-        # BotCommand(command='', description=''),
+        BotCommand(command='/finish1', description='Конец выбора ВУЗов'),
+        BotCommand(command='/finish2', description='Конец выбора предметов'),
     ]
+    await bot.set_my_commands(commands)
+
 
 async def main():
     # настройка логировния (чего происходит в программе)
@@ -30,17 +34,18 @@ async def main():
 
     # инициализация бота и диспетчера
     bot = Bot(token= token)
-    dp = Dispatcher(bot, storage= MemoryStorage)
+    dp = Dispatcher(bot, storage= MemoryStorage())
 
     # регистриация обработчиков
-    register_select_vuz_func(dp)
-    register_begining(dp)
+    register_introduction(dp)
+    register_choose_vuz(dp)
+    register_choose_subjects(dp)
 
     # установка команд
     await set_commands(bot)
 
     # начало работы
-    await dp.skip_updates()
+    await dp.skip_updates() # потом надо будет убрать 
     await dp.start_polling()
 
 
