@@ -10,7 +10,7 @@ async def begining(message: types.Message, state: FSMContext):
     await state.finish()
 
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard= True)
-    buttom = 'Погнали'
+    buttom = "Okay. Let's go!"
     keyboard.add(buttom)
 
     await message.answer(
@@ -20,7 +20,8 @@ async def begining(message: types.Message, state: FSMContext):
         'и ты не можешь выбрать. Ты мне пишешь, '
         'куда  хочешь поступить, по каким предметам, ' 
         'и какие критерии тебе важны. '
-        'А я тебе топ твоих ВУЗов с баллами по этим критериям.',
+        'А я тебе топ твоих ВУЗов с баллами по этим критериям.\n'
+        'P.s. в левом нижнем углу есть 3 полоски, если на них нажать, то получишь список команд.',
         reply_markup= keyboard
     )
 
@@ -38,13 +39,15 @@ async def after_begining(message: types.Message, state: FSMContext):
         switch_inline_query_current_chat=''
     ))
     await message.answer(
-        'Начнем. Я должен узнать, куда ты хочешь постпить. '
-        'Ты можешь посмотеть, какие ВУЗы есть в базе данных и указать их. '
+        'Начнем. Я должен узнать, куда ты хочешь поступить. '
+        'Ты можешь посмотреть, какие ВУЗы есть в базе данных и указать их. '
         'Если какого-то ВУЗа нет, то надо будет указать 3 ссылки на него. '
         'С этих 3-х сайтов:\n'
         'https://tabiturient.ru\n'
         'https://vuzopedia.ru\n'
-        'https://ucheba.ru/for-abiturients/vuz',
+        'https://ucheba.ru/for-abiturients/vuz\n'
+        "(Надо зайти на сайт ввести название ВУЗа, зайти на страничку и скопировать ссылку "
+        "потом просто отправить сюда.)",
         reply_markup= keyboard_inline,
         disable_web_page_preview= True
     )
@@ -53,7 +56,12 @@ async def after_begining(message: types.Message, state: FSMContext):
 
     await state.update_data(chosen_vuzes_in_base = [])
     await state.update_data(chosen_vuzes = [])
+
     await CheckState.waiting_for_put_vuz_in_mem.set()
+
+    await state.update_data(check1 = False)
+    await state.update_data(check2 = False)
+    await state.update_data(check3 = False)
 
 
 

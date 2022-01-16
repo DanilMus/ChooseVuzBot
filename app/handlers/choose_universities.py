@@ -8,6 +8,7 @@ from app.states import CheckState
 data = db_worker.get_data()
 data_vuz = data.keys()
 
+
 # создание строки, где будет показываться есть ли данный ВУЗ в базе
 async def select_univ(message_query: types.InlineQuery, state: FSMContext):
     if len(data_vuz) == 0:
@@ -51,9 +52,23 @@ async def put_vuz_in_mem(message: types.Message, state: FSMContext):
         
         async with state.proxy() as data:
             for elem in what_get:
-                if ('https://tabiturient.ru/vuzu/' in elem) or ('https://vuzopedia.ru/vuz/' in elem) or ('https://www.ucheba.ru/uz/' in elem):
+                if ('https://tabiturient.ru/vuzu/' in elem): # or ('https://vuzopedia.ru/vuz/' in elem) or ('https://www.ucheba.ru/uz/' in elem):
                     new_elem = ('/'.join(elem.split('/')[0:5]))
                     data['chosen_vuzes'].append(new_elem)
+                    data['check1'] = True
+                elif ('https://vuzopedia.ru/vuz/' in elem):
+                    new_elem = ('/'.join(elem.split('/')[0:5]))
+                    data['chosen_vuzes'].append(new_elem)
+                    data['check2'] = True
+                elif ('https://www.ucheba.ru/uz/' in elem):
+                    new_elem = ('/'.join(elem.split('/')[0:5]))
+                    data['chosen_vuzes'].append(new_elem)
+                    data['check3'] = True
+                
+                if data['check1'] and data['check2'] and data['check3']:
+                    data['check1'], data['check2'], data['check3'] = False, False, False
+                    await message.answer('ВУЗ получен.')
+
 
 
 # заканчивает получение ВУЗов
@@ -69,8 +84,8 @@ async def proverka_vuzes(message: types.Message, state: FSMContext):
     await message.answer("Произвожу проверку корректности данных.")
 
     if (len(just_vuzes) < 3) and (len(vuzes_from_data) < 1):
-        return message.answer('Вы указали слишком мало данных')
-        
+        return await message.answer('Вы указали слишком мало данных. Нужно начать заново. /start')
+
     for i in range(0, len(just_vuzes), 3):
         fir = just_vuzes[i]
         sec = just_vuzes[i+1]
@@ -91,7 +106,7 @@ async def proverka_vuzes(message: types.Message, state: FSMContext):
             return await message.answer(
                 "Вы что-то ввели не так.\n Возможно, здесь:\n"
                 f"{fir}\n {sec}\n {thi}"
-                "К сожалению придется начать все сначала."
+                "К сожалению придется начать все сначала. /start"
             )
     
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard= True)

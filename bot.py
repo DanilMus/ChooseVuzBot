@@ -10,6 +10,7 @@ from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from app.handlers.introduction import register_introduction
 from app.handlers.choose_universities import register_choose_vuz
 from app.handlers.choose_subjects import register_choose_subjects
+from app.handlers.choose_prioritets_for_criteria import register_prioritets_for_criteria
 
 
 logger = logging.getLogger(__name__)
@@ -40,6 +41,7 @@ async def main():
     register_introduction(dp)
     register_choose_vuz(dp)
     register_choose_subjects(dp)
+    register_prioritets_for_criteria(dp)
 
     # установка команд
     await set_commands(bot)
