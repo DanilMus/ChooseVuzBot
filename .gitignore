@@ -1,5 +1,5 @@
 __pycache__
 tests
-data
+/data/data.json
 /config/bot_config.py
 .vscode 
