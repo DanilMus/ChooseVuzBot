@@ -4,22 +4,16 @@ from app.handlers.choose_subjects import register_choose_subjects
 
 from app.states import CheckState
 
-buttoms = [
-    "да",
-    "скорее да, чем нет",
-    "нет",
-    "скорее нет, чем да",
-    "не знаю",
-]
+buttoms = ['0','1','2','3','4']
 
 async def criterion1(message: types.Message, state: FSMContext):
     await message.answer(
         "Смотри. Сейчас я буду давать тебе разные критерии (всего 10), "
-        "прошу отметить, насколько они для тебя важны.",
+        "прошу отметить, насколько они для тебя важны от 0 до 4",
         reply_markup= types.ReplyKeyboardRemove()
     )
 
-    keyboard = types.ReplyKeyboardMarkup(resize_keyboard= True, row_width= 2)
+    keyboard = types.ReplyKeyboardMarkup(resize_keyboard= True)
     keyboard.add(*buttoms)
 
     await message.answer(
@@ -35,17 +29,13 @@ async def criterion2(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data['chosen_criteria'].append(message.text)
 
-    keyboard = types.ReplyKeyboardMarkup(resize_keyboard= True, row_width= 2)
-    keyboard.add(*buttoms)
-
     await message.answer(
         "2. Есть еще необчный критерий.\n"
         "Скорее всего, в твоем ВУЗе куча специальностей по предметам, "
         "которые ты выбрал. И ты, наверняка, хочешь поступить на самые крутые специальности. "
-        "Но на эти спецальности обычно баллы куда больше, поэтому баллы этих специльнальностей стоит выделить. "
-        'Я их называю "Первые 3 макс. балла" '
-        "Важно ли тебе это?",
-        reply_markup= keyboard
+        "Но на эти спецальности обычно баллы куда больше.\n"
+        "Хотел бы ты выделить эти специальности? "
+        '\n\nP.s.Я их называю "3 макс. балла ЕГЭ" на специальности.'
     )
 
     await CheckState.waiting_for_select_criterion3.set()
@@ -56,12 +46,8 @@ async def criterion3(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data['chosen_criteria'].append(message.text)
 
-    keyboard = types.ReplyKeyboardMarkup(resize_keyboard= True, row_width= 2)
-    keyboard.add(*buttoms)
-
     await message.answer(
-        "3. Важно ли тебе количество бюджетных мест (на спец. по твоим предметам?)",
-        reply_markup= keyboard
+        "3. Важно ли тебе количество бюджетных мест (на специальности по твоим предметам?)"
     )
 
     await CheckState.waiting_for_select_criterion4.set()
@@ -72,13 +58,9 @@ async def criterion4(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data['chosen_criteria'].append(message.text)
 
-    keyboard = types.ReplyKeyboardMarkup(resize_keyboard= True, row_width= 2)
-    keyboard.add(*buttoms)
-
     await message.answer(
         "4. А что на счет количества бюджетных мест на специальности "
-        "с высокими баллами (3 макс. балла ЕГЭ)?",
-        reply_markup= keyboard
+        'с высокими баллами ("3 макс. балла ЕГЭ")?'
     )
 
     await CheckState.waiting_for_select_criterion5.set()
@@ -89,12 +71,8 @@ async def criterion5(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data['chosen_criteria'].append(message.text)
 
-    keyboard = types.ReplyKeyboardMarkup(resize_keyboard= True, row_width= 2)
-    keyboard.add(*buttoms)
-
     await message.answer(
-        "5. Поговорим об армии. Насколько тебе нужна военная кафедра?",
-        reply_markup= keyboard
+        "5. Поговорим об армии. Насколько тебе нужна военная кафедра?"
     )
 
     await CheckState.waiting_for_select_criterion6.set()
@@ -105,13 +83,9 @@ async def criterion6(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data['chosen_criteria'].append(message.text)
 
-    keyboard = types.ReplyKeyboardMarkup(resize_keyboard= True, row_width= 2)
-    keyboard.add(*buttoms)
-
     await message.answer(
         "6. Важно ли тебе, чтобы преподаватель уделял тебе время чаще? "
-        "(Посмотрим сколько студентов приходится на одного учителя.)",
-        reply_markup= keyboard
+        "(Посмотрим сколько студентов приходится на одного учителя.)"
     )
 
     await CheckState.waiting_for_select_criterion7.set()
@@ -122,13 +96,9 @@ async def criterion7(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data['chosen_criteria'].append(message.text)
 
-    keyboard = types.ReplyKeyboardMarkup(resize_keyboard= True, row_width= 2)
-    keyboard.add(*buttoms)
-
     await message.answer(
-        "7. РФ составляет рейтинги ВУЗов. "
-        "Важен ли тебе он?",
-        reply_markup= keyboard
+        "7. Есть также российские рейтинги ВУЗов. "
+        "Важен ли тебе они?"
     )
 
     await CheckState.waiting_for_select_criterion8.set()
@@ -139,12 +109,9 @@ async def criterion8(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data['chosen_criteria'].append(message.text)
 
-    keyboard = types.ReplyKeyboardMarkup(resize_keyboard= True, row_width= 2)
-    keyboard.add(*buttoms)
-
     await message.answer(
-        "8. А что насчет зарубежного рейтинга?",
-        reply_markup= keyboard
+        "8. А что насчет зарубежного рейтинга?\n"
+        "(QS World University Rankings)"
     )
 
     await CheckState.waiting_for_select_criterion9.set()
@@ -155,12 +122,9 @@ async def criterion9(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data['chosen_criteria'].append(message.text)
 
-    keyboard = types.ReplyKeyboardMarkup(resize_keyboard= True, row_width= 2)
-    keyboard.add(*buttoms)
 
     await message.answer(
-        "9. Ценны ли тебе отзывы?",
-        reply_markup= keyboard
+        "9. Ценны ли тебе отзывы об этом ВУЗе?"
     )
 
     await CheckState.waiting_for_select_criterion10.set()
@@ -171,12 +135,8 @@ async def criterion10(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data['chosen_criteria'].append(message.text)
 
-    keyboard = types.ReplyKeyboardMarkup(resize_keyboard= True, row_width= 2)
-    keyboard.add(*buttoms)
-
     await message.answer(
-        "10. И последний пукт. Насколько общежитие имеет значение?",
-        reply_markup= keyboard
+        "10. И последний пукт. Насколько общежитие имеет значение?"
     )
 
     await CheckState.waiting_for_the_end.set()
@@ -187,7 +147,7 @@ async def the_end(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data['chosen_criteria'].append(message.text)
     
-    await message.answer('Поздравляю! Осталось только дождаться результатов. \nНачинаю обработку...')
+    await message.answer('Поздравляю! Осталось только дождаться результатов. \nНачинаю обработку...', reply_markup= types.ReplyKeyboardRemove())
 
 
 def register_prioritets_for_criteria(dp: Dispatcher):

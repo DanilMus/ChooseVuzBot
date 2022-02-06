@@ -52,7 +52,7 @@ async def put_vuz_in_mem(message: types.Message, state: FSMContext):
         
         async with state.proxy() as data:
             for elem in what_get:
-                if ('https://tabiturient.ru/vuzu/' in elem): # or ('https://vuzopedia.ru/vuz/' in elem) or ('https://www.ucheba.ru/uz/' in elem):
+                if ('https://tabiturient.ru/vuzu/' in elem):
                     new_elem = ('/'.join(elem.split('/')[0:5]))
                     data['chosen_vuzes'].append(new_elem)
                     data['check1'] = True
@@ -79,9 +79,7 @@ async def proverka_vuzes(message: types.Message, state: FSMContext):
     await message.answer(f"Вот, что вы ввели из базы:\n{' '.join(vuzes_from_data)}")
 
     just_vuzes = what_user_wrote['chosen_vuzes']
-    await message.answer(f"Вот, что вы ввели:\n{' '.join(just_vuzes)}", disable_web_page_preview= True)
-
-    await message.answer("Произвожу проверку корректности данных.")
+    await message.answer(f"Вот, что ввели вы:\n{' '.join(just_vuzes)}", disable_web_page_preview= True)
 
     if (len(just_vuzes) < 3) and (len(vuzes_from_data) < 1):
         return await message.answer('Вы указали слишком мало данных. Нужно начать заново. /start')
