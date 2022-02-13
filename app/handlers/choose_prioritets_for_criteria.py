@@ -1,6 +1,5 @@
 from aiogram import types, Dispatcher
 from aiogram.dispatcher.storage import FSMContext
-from app.handlers.choose_subjects import register_choose_subjects
 
 from app.states import CheckState
 
@@ -27,7 +26,7 @@ async def criterion2(message: types.Message, state: FSMContext):
     if message.text not in buttoms:
         return await message.answer('Нажми на кнопку, пожалуйста.')
     async with state.proxy() as data:
-        data['chosen_criteria'].append(message.text)
+        data['chosen_criteria'].append(int(message.text))
 
     await message.answer(
         "2. Есть еще необчный критерий.\n"
@@ -44,7 +43,7 @@ async def criterion3(message: types.Message, state: FSMContext):
     if message.text not in buttoms:
         return await message.answer('Нажми на кнопку, пожалуйста.')
     async with state.proxy() as data:
-        data['chosen_criteria'].append(message.text)
+        data['chosen_criteria'].append(int(message.text))
 
     await message.answer(
         "3. Важно ли тебе количество бюджетных мест (на специальности по твоим предметам?)"
@@ -56,7 +55,7 @@ async def criterion4(message: types.Message, state: FSMContext):
     if message.text not in buttoms:
         return await message.answer('Нажми на кнопку, пожалуйста.')
     async with state.proxy() as data:
-        data['chosen_criteria'].append(message.text)
+        data['chosen_criteria'].append(int(message.text))
 
     await message.answer(
         "4. А что на счет количества бюджетных мест на специальности "
@@ -69,7 +68,7 @@ async def criterion5(message: types.Message, state: FSMContext):
     if message.text not in buttoms:
         return await message.answer('Нажми на кнопку, пожалуйста.')
     async with state.proxy() as data:
-        data['chosen_criteria'].append(message.text)
+        data['chosen_criteria'].append(int(message.text))
 
     await message.answer(
         "5. Поговорим об армии. Насколько тебе нужна военная кафедра?"
@@ -81,7 +80,7 @@ async def criterion6(message: types.Message, state: FSMContext):
     if message.text not in buttoms:
         return await message.answer('Нажми на кнопку, пожалуйста.')
     async with state.proxy() as data:
-        data['chosen_criteria'].append(message.text)
+        data['chosen_criteria'].append(int(message.text))
 
     await message.answer(
         "6. Важно ли тебе, чтобы преподаватель уделял тебе время чаще? "
@@ -94,7 +93,7 @@ async def criterion7(message: types.Message, state: FSMContext):
     if message.text not in buttoms:
         return await message.answer('Нажми на кнопку, пожалуйста.')
     async with state.proxy() as data:
-        data['chosen_criteria'].append(message.text)
+        data['chosen_criteria'].append(int(message.text))
 
     await message.answer(
         "7. Есть также российские рейтинги ВУЗов. "
@@ -107,7 +106,7 @@ async def criterion8(message: types.Message, state: FSMContext):
     if message.text not in buttoms:
         return await message.answer('Нажми на кнопку, пожалуйста.')
     async with state.proxy() as data:
-        data['chosen_criteria'].append(message.text)
+        data['chosen_criteria'].append(int(message.text))
 
     await message.answer(
         "8. А что насчет зарубежного рейтинга?\n"
@@ -120,7 +119,7 @@ async def criterion9(message: types.Message, state: FSMContext):
     if message.text not in buttoms:
         return await message.answer('Нажми на кнопку, пожалуйста.')
     async with state.proxy() as data:
-        data['chosen_criteria'].append(message.text)
+        data['chosen_criteria'].append(int(message.text))
 
 
     await message.answer(
@@ -133,21 +132,22 @@ async def criterion10(message: types.Message, state: FSMContext):
     if message.text not in buttoms:
         return await message.answer('Нажми на кнопку, пожалуйста.')
     async with state.proxy() as data:
-        data['chosen_criteria'].append(message.text)
+        data['chosen_criteria'].append(int(message.text))
 
     await message.answer(
         "10. И последний пукт. Насколько общежитие имеет значение?"
     )
 
-    await CheckState.waiting_for_the_end.set()
+    await CheckState.waiting_for_selected_criterion.set()
 
-async def the_end(message: types.Message, state: FSMContext):
+async def selected_criterion(message: types.Message, state: FSMContext):
     if message.text not in buttoms:
         return await message.answer('Просто нажми на нее.')
     async with state.proxy() as data:
-        data['chosen_criteria'].append(message.text)
+        data['chosen_criteria'].append(int(message.text))
     
     await message.answer('Поздравляю! Осталось только дождаться результатов. \nНачинаю обработку...', reply_markup= types.ReplyKeyboardRemove())
+    await CheckState.waiting_for_the_end().set()
 
 
 def register_prioritets_for_criteria(dp: Dispatcher):
@@ -161,4 +161,4 @@ def register_prioritets_for_criteria(dp: Dispatcher):
     dp.register_message_handler(criterion8, state= CheckState.waiting_for_select_criterion8)
     dp.register_message_handler(criterion9, state= CheckState.waiting_for_select_criterion9)
     dp.register_message_handler(criterion10, state= CheckState.waiting_for_select_criterion10)
-    dp.register_message_handler(the_end, state= CheckState.waiting_for_the_end)
+    dp.register_message_handler(selected_criterion, state= CheckState.waiting_for_the_end)

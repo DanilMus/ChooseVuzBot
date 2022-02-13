@@ -1,6 +1,5 @@
 from bs4 import BeautifulSoup
 import aiohttp
-import asyncio
 
 def do_new_url(url, subj):
     new_url = url + '/poege/'

@@ -54,15 +54,15 @@ async def put_vuz_in_mem(message: types.Message, state: FSMContext):
             for elem in what_get:
                 if ('https://tabiturient.ru/vuzu/' in elem):
                     new_elem = ('/'.join(elem.split('/')[0:5]))
-                    data['chosen_vuzes'].append(new_elem)
+                    data['chosen_vuzes_tabi'].append(new_elem)
                     data['check1'] = True
                 elif ('https://vuzopedia.ru/vuz/' in elem):
                     new_elem = ('/'.join(elem.split('/')[0:5]))
-                    data['chosen_vuzes'].append(new_elem)
+                    data['chosen_vuzes_vuzo'].append(new_elem)
                     data['check2'] = True
                 elif ('https://www.ucheba.ru/uz/' in elem):
                     new_elem = ('/'.join(elem.split('/')[0:5]))
-                    data['chosen_vuzes'].append(new_elem)
+                    data['chosen_vuzes_uche'].append(new_elem)
                     data['check3'] = True
                 
                 if data['check1'] and data['check2'] and data['check3']:
@@ -78,35 +78,17 @@ async def proverka_vuzes(message: types.Message, state: FSMContext):
     vuzes_from_data = what_user_wrote['chosen_vuzes_in_base']
     await message.answer(f"Вот, что вы ввели из базы:\n{' '.join(vuzes_from_data)}")
 
-    just_vuzes = what_user_wrote['chosen_vuzes']
+    just_vuzes = what_user_wrote['chosen_vuzes_tabi'] + what_user_wrote['chosen_vuzes_vuzo'] + what_user_wrote['chosen_vuzes_uche']
     await message.answer(f"Вот, что ввели вы:\n{' '.join(just_vuzes)}", disable_web_page_preview= True)
 
-    if (len(just_vuzes) < 3) and (len(vuzes_from_data) < 1):
-        return await message.answer('Вы указали слишком мало данных. Нужно начать заново. /start')
+    tabi = what_user_wrote['chosen_vuzes_tabi']
+    vuzo = what_user_wrote['chosen_vuzes_vuzo']
+    uche = what_user_wrote['chosen_vuzes_uche']
+    if len(tabi) != len(vuzo) != len(uche):
+        return await message.answer('Количество ссылок на ВУЗы не совпадает.\nПроверь корректность данных, и начните заново.\nНажми -> /start')
+    if (len(tabi) < 1) and (len(vuzes_from_data) < 1):
+        return await message.answer('Ты не указал ВУЗы.')
 
-    for i in range(0, len(just_vuzes), 3):
-        fir = just_vuzes[i]
-        sec = just_vuzes[i+1]
-        thi = just_vuzes[i+2]
-        if ('tabiturient.ru' in fir) and ('vuzopedia.ru' in sec) and ('ucheba.ru' in thi):
-            continue
-        elif ('tabiturient.ru' in fir) and ('vuzopedia.ru' in thi) and ('ucheba.ru' in sec):
-            continue
-        elif ('tabiturient.ru' in sec) and ('vuzopedia.ru' in fir) and ('ucheba.ru' in thi):
-            continue
-        elif ('tabiturient.ru' in sec) and ('vuzopedia.ru' in thi) and ('ucheba.ru' in sec):
-            continue
-        elif ('tabiturient.ru' in thi) and ('vuzopedia.ru' in fir) and ('ucheba.ru' in sec):
-            continue
-        elif ('tabiturient.ru' in thi) and ('vuzopedia.ru' in sec) and ('ucheba.ru' in fir):
-            continue
-        else:
-            return await message.answer(
-                "Вы что-то ввели не так.\n Возможно, здесь:\n"
-                f"{fir}\n {sec}\n {thi}"
-                "К сожалению придется начать все сначала. /start"
-            )
-    
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard= True)
     keyboard.add('Хорошо')
 

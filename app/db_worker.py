@@ -8,16 +8,20 @@ if not(os.path.exists('data/data.json')):
     with open('data/data.json','w',encoding='utf-8') as file:
         json.dump({}, file, indent= 4, ensure_ascii= False)
 
-def get_data():
-    with open('data/data.json','r',encoding='utf-8') as file:
+def get_vuz(name):
+    with open('tests/a.json','r',encoding='utf-8') as file:
         data = json.load(file)
     
-    return data
+    vuz = data.get(name,0)
 
-def rewrite_data(data):
-    with open('data/data.json','w',encoding='utf-8') as file:
-        json.dump(data, file, indent= 4, ensure_ascii= False)
+    return vuz
 
-def push_data(data):
-    with open('data/data.json','a',encoding='utf-8') as file:
+def download_vuzes(vuzes:dict):
+    with open('tests/a.json','r',encoding='utf-8') as file:
+        data = json.load(file)
+    
+    for key, val in vuzes.items():
+        data[key] = val
+
+    with open('tests/a.json','w',encoding='utf-8') as file:
         json.dump(data, file, indent= 4, ensure_ascii= False)

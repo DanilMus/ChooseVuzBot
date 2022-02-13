@@ -17,4 +17,4 @@ async def reviews(url):
 
             grade = (10*good + 5*middle + bad*1) / 100
 
-        return grade
+        return round(grade,2)

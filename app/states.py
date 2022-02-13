@@ -15,4 +15,5 @@ class CheckState(StatesGroup):
     waiting_for_select_criterion8 = State()
     waiting_for_select_criterion9 = State()
     waiting_for_select_criterion10 = State()
+    waiting_for_selected_criterion = State()
     waiting_for_the_end = State()

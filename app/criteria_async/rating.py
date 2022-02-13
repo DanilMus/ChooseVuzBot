@@ -20,7 +20,7 @@ async def rating_abro(url):
                 break
 
         if not(rating_abro):
-            rating_abro = 1500
+            rating_abro = 0
 
         return rating_abro
 
@@ -32,7 +32,13 @@ async def rating_russ(url):
 
         vuz_rating = soup.find_all(class_='panel rating-table__rating')
 
-        rating_russ = int(vuz_rating[-1].find(class_='rating-table__col rating-table__col--rf').text.strip())
+        for i in range(len(vuz_rating)-1,-1,-1):
+            num = vuz_rating[i].find(class_='rating-table__col rating-table__col--rf').text.strip()
+            
+            if num.isdigit():
+                rating_russ = int(num)
+                break
+        else:
+            rating_russ = 0
 
         return rating_russ
-
