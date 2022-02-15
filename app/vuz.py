@@ -8,7 +8,7 @@ from app.criteria_async.EGE_and_bud_pl import EGE_and_bud_pl
 
 import asyncio
 
-class vuz:
+class VUZ:
     
     def __init__(self, tabi, vuzo, uche, subj):
         self.tabi = tabi
@@ -18,7 +18,7 @@ class vuz:
 
         self.loop = asyncio.get_event_loop()
 
-    async def _full_info(self):
+    async def async_full_info(self):
         name = await vuz_name(self.vuzo)
         EGE, bud_pl, EGE_of_3max, bud_pl_of_3max = await EGE_and_bud_pl(self.vuzo, self.subj)
         milit_dep = await milit_department(self.vuzo)
@@ -30,10 +30,18 @@ class vuz:
         reviews_ = await reviews(self.tabi)
         
         stud_to_teach = round((stt_u + stt_v) / 2, 1)
-        return name, EGE, bud_pl, EGE_of_3max, bud_pl_of_3max, milit_dep, stud_to_teach, rating_rus, rating_eng, obsh_, reviews_
+        return [name, EGE, bud_pl, EGE_of_3max, bud_pl_of_3max, milit_dep, stud_to_teach, rating_rus, rating_eng, reviews_, obsh_]
     
     def full_info(self):
-        return self.loop.run_until_complete(self._full_info())
+        return list(self.loop.run_until_complete(self.async_full_info()))
+    
+    async def async_EGE_and_bud_pl(self):
+        pomosh = await EGE_and_bud_pl(self.vuzo, self.subj)
+        pomosh = list(pomosh)
+        return pomosh
+
+    def EGE_and_bud_pl(self):
+        return list(self.loop.run_until_complete(EGE_and_bud_pl(self.vuzo, self.subj)))
 
     def name(self):
         return self.loop.run_until_complete(vuz_name(self.vuzo))

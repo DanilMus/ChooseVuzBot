@@ -29,12 +29,7 @@ async def criterion2(message: types.Message, state: FSMContext):
         data['chosen_criteria'].append(int(message.text))
 
     await message.answer(
-        "2. Есть еще необчный критерий.\n"
-        "Скорее всего, в твоем ВУЗе куча специальностей по предметам, "
-        "которые ты выбрал. И ты, наверняка, хочешь поступить на самые крутые специальности. "
-        "Но на эти спецальности обычно баллы куда больше.\n"
-        "Хотел бы ты выделить эти специальности? "
-        '\n\nP.s.Я их называю "3 макс. балла ЕГЭ" на специальности.'
+        "2. Важно ли тебе количество бюджетных мест (на специальности по твоим предметам?)"
     )
 
     await CheckState.waiting_for_select_criterion3.set()
@@ -46,7 +41,12 @@ async def criterion3(message: types.Message, state: FSMContext):
         data['chosen_criteria'].append(int(message.text))
 
     await message.answer(
-        "3. Важно ли тебе количество бюджетных мест (на специальности по твоим предметам?)"
+        "3. Есть еще необчный критерий.\n"
+        "Скорее всего, в твоем ВУЗе куча специальностей по предметам, "
+        "которые ты выбрал. И ты, наверняка, хочешь поступить на самые крутые специальности. "
+        "Но на эти спецальности обычно баллы куда больше.\n"
+        "Хотел бы ты выделить эти специальности? "
+        '\n\nP.s.Я их называю "3 макс. балла ЕГЭ" на специальности.'
     )
 
     await CheckState.waiting_for_select_criterion4.set()
@@ -145,9 +145,12 @@ async def selected_criterion(message: types.Message, state: FSMContext):
         return await message.answer('Просто нажми на нее.')
     async with state.proxy() as data:
         data['chosen_criteria'].append(int(message.text))
+
+    keyboard = types.ReplyKeyboardMarkup(resize_keyboard= True)
+    keyboard.add('Хорошо')
     
-    await message.answer('Поздравляю! Осталось только дождаться результатов. \nНачинаю обработку...', reply_markup= types.ReplyKeyboardRemove())
-    await CheckState.waiting_for_the_end().set()
+    await message.answer('Поздравляю! Осталось только дождаться результатов. \nНачинаю обработку...\n\nP.s. Это займет, примерно, 10-15 минут.\nТак что можешь пока попить чайку.', reply_markup= keyboard)
+    await CheckState.waiting_for_the_end.set()
 
 
 def register_prioritets_for_criteria(dp: Dispatcher):
@@ -161,4 +164,4 @@ def register_prioritets_for_criteria(dp: Dispatcher):
     dp.register_message_handler(criterion8, state= CheckState.waiting_for_select_criterion8)
     dp.register_message_handler(criterion9, state= CheckState.waiting_for_select_criterion9)
     dp.register_message_handler(criterion10, state= CheckState.waiting_for_select_criterion10)
-    dp.register_message_handler(selected_criterion, state= CheckState.waiting_for_the_end)
+    dp.register_message_handler(selected_criterion, state= CheckState.waiting_for_selected_criterion)

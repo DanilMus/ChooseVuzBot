@@ -31,7 +31,6 @@ def do_new_url(url, subj):
     return new_url
     
 def find_pagination(soup):
-    from bs4 import BeautifulSoup
     try: 
         pagination = soup.find(class_='pagination')
     except:
@@ -49,7 +48,10 @@ def find_pagination(soup):
 
 def do__of_3max(max_bals, buds_for_max_bals):
     count = len([elem for elem in max_bals if elem != 0])
-    bals_of_3max = sum(max_bals) // count
+    if count != 0:
+        bals_of_3max = sum(max_bals) // count
+    else: 
+        bals_of_3max = 0
     bud_pl_of_3max = sum(buds_for_max_bals)
 
     return bals_of_3max, bud_pl_of_3max
@@ -106,12 +108,15 @@ async def EGE_and_bud_pl_count(url, session):
                     elif bal == max_bals[2]:
                         buds_for_max_bals[2] = bud
         
-        bals //= count
-        if count <= 3:
-            bals_of_3max = bals
+        if count != 0:
+            bals //= count
         else:
-            bals_of_3max = sum(max_bals) // 3
-        bud_pl_of_3max = sum(buds_for_max_bals)
+            bals = 0
+        # if count <= 3:
+        #     bals_of_3max = bals
+        # else:
+        #     bals_of_3max = sum(max_bals) // 3
+        # bud_pl_of_3max = sum(buds_for_max_bals)
 
         return bals, buds, max_bals, buds_for_max_bals
 
@@ -131,13 +136,15 @@ async def EGE_and_bud_pl(url, subj):
             for i in range(len(egecombs)):
                 egecombs[i] = 'https://vuzopedia.ru/' + egecombs[i].get('href')
         except Exception:
-            egecombs = [new_url]
+            egecombs = [new_url] # если нет комбинаций, то просто обычная ссылка
 
         bals, buds, bals_of_3max, bud_pl_of_3max, count = 0, 0, 0, 0, 0
         max_bals = [0, 0, 0]
         buds_for_max_bals = [0, 0, 0]
+        # перебор по возможным комбинациям
         for new_url in egecombs:
             pages = find_pagination(soup)
+            # перебор по страницам (если не будет, то просто возмет 1 стр.)
             for i in range(pages):
                 h1, h2, h3, h4 = await EGE_and_bud_pl_count(f'{new_url}?page={i+1}', session)
                 bals += h1
@@ -145,6 +152,9 @@ async def EGE_and_bud_pl(url, subj):
                 max_bals, buds_for_max_bals = count__of_3max(max_bals, buds_for_max_bals, h3, h4)
                 count += 1
         
-        bals //= count
+        if count != 0:
+            bals //= count
+        else:
+            bals = 0
         bals_of_3max, bud_pl_of_3max = do__of_3max(max_bals, buds_for_max_bals)
         return bals, buds, bals_of_3max, bud_pl_of_3max

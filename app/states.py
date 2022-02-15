@@ -17,3 +17,4 @@ class CheckState(StatesGroup):
     waiting_for_select_criterion10 = State()
     waiting_for_selected_criterion = State()
     waiting_for_the_end = State()
+    waiting_for_additional_info = State()

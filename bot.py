@@ -11,6 +11,7 @@ from app.handlers.introduction import register_introduction
 from app.handlers.choose_universities import register_choose_vuz
 from app.handlers.choose_subjects import register_choose_subjects
 from app.handlers.choose_prioritets_for_criteria import register_prioritets_for_criteria
+from app.handlers.the_end import register_the_end
 
 
 logger = logging.getLogger(__name__)
@@ -42,6 +43,7 @@ async def main():
     register_choose_vuz(dp)
     register_choose_subjects(dp)
     register_prioritets_for_criteria(dp)
+    register_the_end(dp)
 
     # установка команд
     await set_commands(bot)

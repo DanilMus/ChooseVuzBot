@@ -55,8 +55,11 @@ async def after_begining(message: types.Message, state: FSMContext):
     await sleep(0.2)
     await message.answer('Когда закончишь указывать введи команду /finish1.')
 
+    # запоминаение того, что ввел пользователь
     await state.update_data(chosen_vuzes_in_base = [])
-    await state.update_data(chosen_vuzes = [])
+    await state.update_data(chosen_vuzes_tabi = [])
+    await state.update_data(chosen_vuzes_vuzo = [])
+    await state.update_data(chosen_vuzes_uche = [])
 
     await CheckState.waiting_for_put_vuz_in_mem.set()
 

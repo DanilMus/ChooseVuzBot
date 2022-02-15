@@ -1,11 +1,11 @@
 from aiogram import types, Dispatcher
 from aiogram.dispatcher.storage import FSMContext
 
-from .. import db_worker
+from app.db_worker import get_data
 from app.states import CheckState
 
 
-data = db_worker.get_data()
+data = get_data()
 data_vuz = data.keys()
 
 
