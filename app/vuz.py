@@ -8,6 +8,7 @@ from app.criteria_async.EGE_and_bud_pl import EGE_and_bud_pl
 
 import asyncio
 
+# сам класс обработки
 class VUZ:
     
     def __init__(self, tabi, vuzo, uche, subj):

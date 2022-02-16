@@ -4,7 +4,7 @@ from aiogram.dispatcher.storage import FSMContext
 import asyncio
 
 from app.states import CheckState
-from app.VUZ import VUZ
+from app.vuz import VUZ
 from app.db_worker import get_vuz, download_new_vuz
 
 # ответные данные пользователю
