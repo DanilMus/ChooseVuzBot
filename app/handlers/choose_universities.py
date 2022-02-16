@@ -65,7 +65,7 @@ async def put_vuz_in_mem(message: types.Message, state: FSMContext):
                     data['chosen_vuzes_uche'].append(new_elem)
                     data['check3'] = True
                 
-                if data['check1'] and data['check2'] and data['check3']:
+                if (data['check1']) and (data['check2']) and (data['check3']):
                     data['check1'], data['check2'], data['check3'] = False, False, False
                     await message.answer('ВУЗ получен.')
 
@@ -76,10 +76,16 @@ async def proverka_vuzes(message: types.Message, state: FSMContext):
     what_user_wrote = await state.get_data()
 
     vuzes_from_data = what_user_wrote['chosen_vuzes_in_base']
-    await message.answer(f"Вот, что вы ввели из базы:\n{' '.join(vuzes_from_data)}")
+    s = ''
+    for i in range(len(vuzes_from_data)):
+        s += '\n' + vuzes_from_data[i]
+    await message.answer(f"Вот, что вы ввели из базы: {s}") #{' '.join(vuzes_from_data)}")
 
     just_vuzes = what_user_wrote['chosen_vuzes_tabi'] + what_user_wrote['chosen_vuzes_vuzo'] + what_user_wrote['chosen_vuzes_uche']
-    await message.answer(f"Вот, что ввели вы:\n{' '.join(just_vuzes)}", disable_web_page_preview= True)
+    s = ''
+    for i in range(len(just_vuzes)):
+        s += '\n' + just_vuzes[i]
+    await message.answer(f"Вот, что ввели вы: {s}", disable_web_page_preview= True) #\n{' '.join(just_vuzes)}", disable_web_page_preview= True)
 
     tabi = what_user_wrote['chosen_vuzes_tabi']
     vuzo = what_user_wrote['chosen_vuzes_vuzo']

@@ -3,30 +3,30 @@ import aiohttp
 
 def do_new_url(url, subj):
     new_url = url + '/poege/'
-    if "математика" in subj:
+    if "Математика" in subj:
         new_url += 'egemat;'
-    if "русский язык" in subj: 
+    if "Русский язык" in subj: 
         new_url += 'egerus;' 
-    if "информатика" in subj:
+    if "Информатика" in subj:
         new_url += 'egeinform;'
-    if "история" in subj:
+    if "История" in subj:
         new_url += 'egeist;'
-    if "обществознание" in subj:
+    if "Обществознание" in subj:
         new_url += 'egeobsh;'
-    if ("английский язык" in subj) or ("иностранный язык" in subj):
+    if "Иностранные языки" in subj:
         new_url += 'egeinyaz;'
-    if "география" in subj:
+    if "География" in subj:
         new_url += 'egegeorg;'
-    if "физика" in subj:
+    if "Физика" in subj:
         new_url += 'egefiz;'
-    if "биология" in subj:
+    if "Биология" in subj:
         new_url += 'egebiol;'
-    if "литература" in subj:
+    if "Литература" in subj:
         new_url += 'egeliter;'
-    if "химия" in subj:
+    if "Химия" in subj:
         new_url += 'egehim;'
-    if "вступительный экзамен" in subj:
-        new_url += 'vstup;'
+    # вступительный, вдруг как в МГУ
+    new_url += 'vstup;'
     
     return new_url
     
@@ -112,12 +112,6 @@ async def EGE_and_bud_pl_count(url, session):
             bals //= count
         else:
             bals = 0
-        # if count <= 3:
-        #     bals_of_3max = bals
-        # else:
-        #     bals_of_3max = sum(max_bals) // 3
-        # bud_pl_of_3max = sum(buds_for_max_bals)
-
         return bals, buds, max_bals, buds_for_max_bals
 
 

@@ -15,6 +15,7 @@ vuzes_rating_copy = {}
 def do_rating(prioritets):
     global vuzes_data, vuzes_rating
     # составляем средние значения
+    print(vuzes_data)
     middle = [0] * 10
     for name, info in vuzes_data.items():
         for i in range(len(info)):
@@ -100,7 +101,7 @@ async def the_end(message: types.Message ,state: FSMContext):
         part_info = get_vuz(name)
         vuz = VUZ(part_info[1], part_info[2], part_info[3], subj)
         EGE_and_bud_pl = await vuz.async_EGE_and_bud_pl()
-        vuzes_data[name] = EGE_and_bud_pl + list(part_info)
+        vuzes_data[name] = EGE_and_bud_pl + list(part_info[4:])
     
     # cоставление рейтинга ВУЗов
     prioritets = user_data['chosen_criteria']
@@ -108,15 +109,19 @@ async def the_end(message: types.Message ,state: FSMContext):
 
     # вывод рейтинга
     await message.answer('Вот и закончилась подготовка рейтинга.\nЯ замедлю вывод, чтобы смотрелось эпичнее.')
-    await asyncio.sleep(4)
+    await message.answer(
+        'Будет выглядеть так:\n'
+        '"место": "ВУЗ" - "баллы, которые набрал"'
+    )
+    await asyncio.sleep(5)
 
     i = len(vuzes_rating)
     for score1 in sorted(vuzes_rating.values()):
         for vuz, score2 in vuzes_rating.items():
             if score1 == score2:
-                await message.answer(f'{i} место: {vuz} - {score2}')
-                del vuzes_rating[name]
-                vuzes_rating_copy[name] = i
+                await message.answer(f'{i} место: {vuz} - {round(score2)}')
+                del vuzes_rating[vuz]
+                vuzes_rating_copy[vuz] = i
                 break
         i -= 1
         await asyncio.sleep(2)
@@ -140,20 +145,23 @@ async def additional_info(message: types.Message, state: FSMContext):
 
                     await message.answer(
                         f'Вуз: {vuz}\n'
-                        f'  Баллы ЕГЭ: {info[1]}\n'
-                        f'  Бюджетные места: {info[2]}\n'
-                        f'  3 макс. балла ЕГЭ: {info[3]}\n'
-                        f'  Бюджетные места на 3 макс. балла ЕГЭ: {info[4]}\n'
-                        f'  Военная кафедра: {info[5]}\n'
-                        f'  Количествово учеников на 1-го учителя: {info[6]}\n'
-                        f'  Российский рейтинг: {info[7]}\n'
-                        f'  Западный рейтинг: {info[8]}\n'
-                        f'  Отзывы: {info[9]}\n'
-                        f'  Общежитие: {info[10]}\n'
+                        f'  Баллы ЕГЭ: {info[0]}\n'
+                        f'  Бюджетные места: {info[1]}\n'
+                        f'  3 макс. балла ЕГЭ: {info[2]}\n'
+                        f'  Бюджетные места на 3 макс. балла ЕГЭ: {info[3]}\n'
+                        f'  Военная кафедра: {info[4]}\n'
+                        f'  Количествово учеников на 1-го учителя: {info[5]}\n'
+                        f'  Российский рейтинг: {info[6]}\n'
+                        f'  Западный рейтинг: {info[7]}\n'
+                        f'  Отзывы: {info[8]}\n'
+                        f'  Общежитие: {info[9]}\n'
                     )
 
                     del vuzes_rating_copy[vuz]
                     await asyncio.sleep(7)
+                    break
+    
+    await message.answer('Большое спасибо, что воспользовался нашим ботом!\n Хорошего Тебе Дня!')
     
     await state.finish()
 

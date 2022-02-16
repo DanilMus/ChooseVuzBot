@@ -16,7 +16,7 @@ async def criterion1(message: types.Message, state: FSMContext):
     keyboard.add(*buttoms)
 
     await message.answer(
-        "1. Тебе важны баллы ЕГЭ (на специальности по твоим предметам)?",
+        "1. Тебе важны низкие баллы ЕГЭ (на специальности по твоим предметам)?",
         reply_markup= keyboard
     )
 
@@ -29,7 +29,7 @@ async def criterion2(message: types.Message, state: FSMContext):
         data['chosen_criteria'].append(int(message.text))
 
     await message.answer(
-        "2. Важно ли тебе количество бюджетных мест (на специальности по твоим предметам?)"
+        "2. Важно ли тебе большое количество бюджетных мест (на специальности по твоим предметам?)"
     )
 
     await CheckState.waiting_for_select_criterion3.set()
@@ -45,8 +45,8 @@ async def criterion3(message: types.Message, state: FSMContext):
         "Скорее всего, в твоем ВУЗе куча специальностей по предметам, "
         "которые ты выбрал. И ты, наверняка, хочешь поступить на самые крутые специальности. "
         "Но на эти спецальности обычно баллы куда больше.\n"
-        "Хотел бы ты выделить эти специальности? "
-        '\n\nP.s.Я их называю "3 макс. балла ЕГЭ" на специальности.'
+        "Хотел бы ты выделить эти специальности (их баллы ЕГЭ)? "
+        '\n\nP.s. Я их называю "3 макс. балла ЕГЭ" на специальности.'
     )
 
     await CheckState.waiting_for_select_criterion4.set()
@@ -58,7 +58,7 @@ async def criterion4(message: types.Message, state: FSMContext):
         data['chosen_criteria'].append(int(message.text))
 
     await message.answer(
-        "4. А что на счет количества бюджетных мест на специальности "
+        "4. А что на счет большого количества бюджетных мест на специальности "
         'с высокими баллами ("3 макс. балла ЕГЭ")?'
     )
 
