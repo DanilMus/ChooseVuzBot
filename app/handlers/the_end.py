@@ -7,15 +7,9 @@ from app.states import CheckState
 from app.vuz import VUZ
 from app.db_worker import get_vuz, download_new_vuz
 
-# ответные данные пользователю
-vuzes_data = {} 
-vuzes_rating = {}
-vuzes_rating_copy = {}
 
-def do_rating(prioritets):
-    global vuzes_data, vuzes_rating
+def do_rating(prioritets, vuzes_data):
     # составляем средние значения
-    print(vuzes_data)
     middle = [0] * 10
     for name, info in vuzes_data.items():
         for i in range(len(info)):
@@ -61,13 +55,19 @@ def do_rating(prioritets):
             score += info[9] / middle[9] * prioritets[9]
 
         vuzes_rating[name] = score
+    
+    return vuzes_rating
 
 
 
 
 
 async def the_end(message: types.Message ,state: FSMContext):
-    # print('Расслабься')
+    # ответные данные пользователю
+    vuzes_data = {} 
+    vuzes_rating_copy = {}
+
+
     user_data = await state.get_data()
 
     subj = user_data['chosen_subj']
@@ -105,7 +105,7 @@ async def the_end(message: types.Message ,state: FSMContext):
     
     # cоставление рейтинга ВУЗов
     prioritets = user_data['chosen_criteria']
-    do_rating(prioritets)
+    vuzes_rating = do_rating(prioritets, vuzes_data)
 
     # вывод рейтинга
     await message.answer('Вот и закончилась подготовка рейтинга.\nЯ замедлю вывод, чтобы смотрелось эпичнее.')
@@ -132,11 +132,18 @@ async def the_end(message: types.Message ,state: FSMContext):
     keyboard.add('Нет')
 
     await message.answer('Хотел бы получить больше информации по собранным данным с твоих вузов?', reply_markup= keyboard)
+
+    await state.update_data(vuzes_data= vuzes_data)
+    await state.update_data(vuzes_rating_copy= vuzes_rating_copy)
     await CheckState().waiting_for_additional_info.set()
 
+
 async def additional_info(message: types.Message, state: FSMContext):
+    user_data = await state.get_data()
+    vuzes_data = user_data['vuzes_data']
+    vuzes_rating_copy = user_data['vuzes_rating_copy']
     if message.text == 'Да':
-        await message.answer('Замедлю, чтобы ты мог успеть все увидеть.')
+        await message.answer('Замедлю, чтобы ты мог успеть все увидеть.', reply_markup= types.ReplyKeyboardRemove())
 
         for i in range(len(vuzes_data),0,-1):
             for vuz, place in vuzes_rating_copy.items():
@@ -161,7 +168,7 @@ async def additional_info(message: types.Message, state: FSMContext):
                     await asyncio.sleep(7)
                     break
     
-    await message.answer('Большое спасибо, что воспользовался нашим ботом!\n Хорошего Тебе Дня!')
+    await message.answer('Большое спасибо, что воспользовался нашим ботом!\n Хорошего Тебе Дня!', reply_markup= types.ReplyKeyboardRemove())
     
     await state.finish()
 

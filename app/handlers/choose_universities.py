@@ -5,12 +5,11 @@ from app.db_worker import get_data
 from app.states import CheckState
 
 
-data = get_data()
-data_vuz = data.keys()
-
-
 # создание строки, где будет показываться есть ли данный ВУЗ в базе
 async def select_univ(message_query: types.InlineQuery, state: FSMContext):
+    data = get_data()
+    data_vuz = data.keys()
+
     if len(data_vuz) == 0:
         text = 'База находиться в стадии обновления.'
         just = [
@@ -42,6 +41,9 @@ async def select_univ(message_query: types.InlineQuery, state: FSMContext):
 
 # получает ВУЗы, в которые хочет поступить пользователь
 async def put_vuz_in_mem(message: types.Message, state: FSMContext):
+    data = get_data()
+    data_vuz = data.keys()
+    
     # сортируем введенные данные на "есть в базе" и "нет" 
     if message.text in data_vuz:
         async with state.proxy() as data:
@@ -67,7 +69,7 @@ async def put_vuz_in_mem(message: types.Message, state: FSMContext):
                 
                 if (data['check1']) and (data['check2']) and (data['check3']):
                     data['check1'], data['check2'], data['check3'] = False, False, False
-                    await message.answer('ВУЗ получен.')
+                    await message.answer('ВУЗ/ВУЗы получен/получены.')
 
 
 
@@ -90,7 +92,7 @@ async def proverka_vuzes(message: types.Message, state: FSMContext):
     tabi = what_user_wrote['chosen_vuzes_tabi']
     vuzo = what_user_wrote['chosen_vuzes_vuzo']
     uche = what_user_wrote['chosen_vuzes_uche']
-    if len(tabi) != len(vuzo) != len(uche):
+    if (len(tabi) != len(vuzo)) or (len(tabi) != len(uche)) or (len(vuzo) != len(uche)):
         return await message.answer('Количество ссылок на ВУЗы не совпадает.\nПроверь корректность данных, и начните заново.\nНажми -> /start')
     if (len(tabi) < 1) and (len(vuzes_from_data) < 1):
         return await message.answer('Ты не указал ВУЗы.')
