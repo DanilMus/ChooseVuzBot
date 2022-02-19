@@ -99,9 +99,10 @@ async def the_end(message: types.Message ,state: FSMContext):
     from_base = user_data['chosen_vuzes_in_base']
     for name in from_base:
         part_info = get_vuz(name)
-        vuz = VUZ(part_info[1], part_info[2], part_info[3], subj)
-        EGE_and_bud_pl = await vuz.async_EGE_and_bud_pl()
-        vuzes_data[name] = EGE_and_bud_pl + list(part_info[4:])
+        if part_info:
+            vuz = VUZ(part_info[0], part_info[1], part_info[2], subj)
+            EGE_and_bud_pl = await vuz.async_EGE_and_bud_pl()
+            vuzes_data[name] = EGE_and_bud_pl + list(part_info[4:])
     
     # cоставление рейтинга ВУЗов
     prioritets = user_data['chosen_criteria']
