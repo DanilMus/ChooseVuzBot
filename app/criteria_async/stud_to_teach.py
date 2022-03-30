@@ -29,8 +29,16 @@ async def stud_to_teach_vuzo(url):
         stud_and_teac = soup.find_all(class_='col-md-6 col-sm-6 col-xs-6')
 
         if stud_and_teac:
-            students = int(stud_and_teac[4].text.strip('\nСтудентов '))
-            teachers = int(stud_and_teac[6].text.strip('\nПреподавателей '))
+            students = stud_and_teac[4].text.strip('\nСтудентов ')
+            if students.isdigit():
+                students = int(students)
+            else:
+                students = 1
+            teachers = stud_and_teac[6].text.strip('\nПреподавателей ')
+            if teachers.isdigit():
+                teachers = int(teachers)
+            else:
+                teachers = 1
 
             stud_to_teach = round(students / teachers, 2)
         else:

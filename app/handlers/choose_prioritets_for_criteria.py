@@ -102,7 +102,7 @@ async def criterion7(message: types.Message, state: FSMContext):
 
     await message.answer(
         "7. Есть также российские рейтинги ВУЗов. "
-        "Важен ли тебе они?"
+        "Важны ли тебе они?"
     )
 
     await CheckState.waiting_for_select_criterion8.set()
