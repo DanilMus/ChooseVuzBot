@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup
 import aiohttp
 
-async def stud_to_teach_uche(url):
+async def studToTeach_uche(url):
     async with aiohttp.ClientSession() as session:
         src = await session.get(url)
 
@@ -20,7 +20,7 @@ async def stud_to_teach_uche(url):
 
         return stud_to_teach
 
-async def stud_to_teach_vuzo(url):
+async def studToTeach_vuzo(url):
     async with aiohttp.ClientSession() as session:
         src = await session.get(url)
 

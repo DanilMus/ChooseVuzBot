@@ -41,7 +41,7 @@ async def going_to_criteria(message: types.Message, state: FSMContext):
     await message.answer('Что же. Последний пункт.', reply_markup= keyboard)
 
     await state.update_data(chosen_criteria = [])
-    await CheckState.waiting_for_select_criterion1.set()
+    await CheckState.waiting_for_select_criterion0.set()
 
 
 def register_choose_subjects(dp: Dispatcher):
