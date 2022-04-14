@@ -1,13 +1,13 @@
 from aiogram import types, Dispatcher
 from aiogram.dispatcher.storage import FSMContext
 
-from app.db_worker import get_data
+from app.db_worker import db_worker
 from app.states import CheckState
 
 
 # создание строки, где будет показываться есть ли данный ВУЗ в базе
 async def select_univ(message_query: types.InlineQuery, state: FSMContext):
-    data = get_data()
+    data = db_worker.get_data()
     data_vuz = data.keys()
 
     if len(data_vuz) == 0:
@@ -41,7 +41,7 @@ async def select_univ(message_query: types.InlineQuery, state: FSMContext):
 
 # получает ВУЗы, в которые хочет поступить пользователь
 async def put_vuz_in_mem(message: types.Message, state: FSMContext):
-    data = get_data()
+    data = db_worker.get_data()
     data_vuz = data.keys()
     
     # сортируем введенные данные на "есть в базе" и "нет" 
@@ -93,8 +93,16 @@ async def proverka_vuzes(message: types.Message, state: FSMContext):
     vuzo = what_user_wrote['chosen_vuzes_vuzo']
     uche = what_user_wrote['chosen_vuzes_uche']
     if (len(tabi) != len(vuzo)) or (len(tabi) != len(uche)) or (len(vuzo) != len(uche)):
-        return await message.answer('Количество ссылок на ВУЗы не совпадает.\nПроверь корректность данных, и начните заново.\nНажми -> /start')
+        await state.update_data(chosen_vuzes_in_base = [])
+        await state.update_data(chosen_vuzes_tabi = [])
+        await state.update_data(chosen_vuzes_vuzo = [])
+        await state.update_data(chosen_vuzes_uche = [])
+        return await message.answer('Количество ссылок на ВУЗы не совпадает.\nПроверь корректность данных, и введи заново.')
     if (len(tabi) < 1) and (len(vuzes_from_data) < 1):
+        await state.update_data(chosen_vuzes_in_base = [])
+        await state.update_data(chosen_vuzes_tabi = [])
+        await state.update_data(chosen_vuzes_vuzo = [])
+        await state.update_data(chosen_vuzes_uche = [])
         return await message.answer('Ты не указал ВУЗы.')
 
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard= True)

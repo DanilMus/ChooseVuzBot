@@ -23,8 +23,7 @@ buttoms = ['0','1','2','3','4']
 async def criterion1(message: types.Message, state: FSMContext):
     data = await state.get_data()
     bals = message.text.strip()
-    if (bals.isdigit()) and(int(bals) <= (len(data['chosen_subj']) * 100 + 10)):
-        await CheckState.waiting_for_select_criterion0.set()
+    if not(bals.isdigit()) and not(int(bals) <= (len(data['chosen_subj']) * 100 + 10)):
         return await message.answer('Неправильно ввел.')
     async with state.proxy() as data:
         data['chosen_criteria'].append(int(message.text))

@@ -19,3 +19,5 @@ class CheckState(StatesGroup):
     waiting_for_selected_criterion = State()
     waiting_for_show_rating = State()
     waiting_for_additional_info = State()
+    waiting_for_additional_info_ = State()
+    waiting_for_the_end = State()

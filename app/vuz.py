@@ -41,16 +41,21 @@ class VUZ:
 
 
     async def async_full_info(self):
-        name = await vuz_name(self.vuzo)
-        EGE, budPl = await EGE_and_budPl(self.vuzo, self.subj)
-        militDep = await militDepartment(self.vuzo)
-        stt_v = await studToTeach_vuzo(self.vuzo)
-        stt_u = await studToTeach_uche(self.uche)
-        rating_rus = await rating_russ(self.uche)
-        rating_eng = await rating_abro(self.uche)
-        obsh_ = await obsh(self.tabi)
-        reviews_ = await reviews(self.tabi)
-        
+        try:
+            name = await vuz_name(self.vuzo)
+            EGE, budPl = await EGE_and_budPl(self.vuzo, self.subj)
+            militDep = await militDepartment(self.vuzo)
+            stt_v = await studToTeach_vuzo(self.vuzo)
+            stt_u = await studToTeach_uche(self.uche)
+            rating_rus = await rating_russ(self.uche)
+            rating_eng = await rating_abro(self.uche)
+            obsh_ = await obsh(self.tabi)
+            reviews_ = await reviews(self.tabi)
+            
+        except Exception as ex:
+            print(ex)
+            return 'Exception'
+
         studToTeach = round((stt_u + stt_v) / 2, 1)
         EGE_of3max, budPl_of3max = self.do__of_3max(EGE, budPl)
 
@@ -60,7 +65,12 @@ class VUZ:
         return self.loop.run_until_complete(self.async_full_info())
     
     async def async_EGE_and_budPl(self):
-        EGE, budPl = await EGE_and_budPl(self.vuzo, self.subj)
+        try: 
+            EGE, budPl = await EGE_and_budPl(self.vuzo, self.subj)
+        except Exception as ex:
+            print(ex)
+            return 'Exception'
+
         EGE_of3max, budPl_of3max = self.do__of_3max(EGE, budPl)
 
         return [EGE, budPl, EGE_of3max, budPl_of3max]

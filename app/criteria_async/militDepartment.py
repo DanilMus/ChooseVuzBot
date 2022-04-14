@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup
 import aiohttp
 
-async def militDpartment(url):
+async def militDepartment(url):
     async with aiohttp.ClientSession() as session:
         src = await session.get(url)
 

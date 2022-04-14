@@ -5,14 +5,15 @@ def make_vuzes_rating(criteria:list, vuzes_data:dict):
     for name, vuz_info in vuzes_data.items(): 
         len_crit = len(vuz_info)
         EGE, EGE_now = vuz_info[0], criteria[0]
-        budPl = vuz_info[1], criteria[2]
-        EGE_of3max = vuz_info[2], criteria[3]
-        budPl_of3max = vuz_info[3], criteria[2]
+        budPl = vuz_info[1]
+        EGE_of3max = vuz_info[2]
+        budPl_of3max = vuz_info[3]
 
 
         faculCount = len(EGE) # общее количество факультетов
         faculCount_whereCan = 0 # только факультеты, куда можешь поступить
         buds = 0 # количество бюджетных мест, куда можешь поступить
+
 
         for i in range(len(EGE)):
             bal = EGE[i]
@@ -37,8 +38,12 @@ def make_vuzes_rating(criteria:list, vuzes_data:dict):
         EGE = faculCount_whereCan
         budPl = buds
         EGE_of3max = faculCount_whereCan_of3max
-        budPl_of3max += buds_of3max
+        budPl_of3max = buds_of3max
 
+        vuz_info[0] = EGE
+        vuz_info[1] = budPl
+        vuz_info[2] = EGE_of3max
+        vuz_info[3] = budPl_of3max
 
         vuzes_rating[name] = [faculCount_whereCan, faculCount]
     
@@ -92,23 +97,23 @@ def make_vuzes_rating(criteria:list, vuzes_data:dict):
 
         # если чем больше тем лучше, то знач / ср.знач. * приоритет (vuzes_data / middle) *  priority
         for i in range(len(if_bigger_thanBetter)):
-            criteria = if_bigger_thanBetter[i]
+            vuz_criteria = if_bigger_thanBetter[i]
             middle_criteria = if_bigger_thanBetter_mid[i]
             priority_criteria = if_bigger_thanBetter_crit[i]
             
             if middle_criteria != 0:
-                score += criteria / middle_criteria * priority_criteria
+                score += vuz_criteria / middle_criteria * priority_criteria
         
         for i in range(len(if_lower_thanBetter)):
-            criteria = if_lower_thanBetter[i]
+            vuz_criteria = if_lower_thanBetter[i]
             middle_criteria = if_lower_thanBetter_mid[i]
             priority_criteria = if_lower_thanBetter_crit[i]
             
-            if middle_criteria != 0:
-                score += middle_criteria / criteria * priority_criteria
+            if vuz_criteria != 0:
+                score += middle_criteria / vuz_criteria * priority_criteria
 
         
-        vuzes_rating[name] = [score] + [vuzes_rating[name]]
+        vuzes_rating[name] = [score] + vuzes_rating[name]
 
 
     return vuzes_rating

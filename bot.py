@@ -11,6 +11,7 @@ from app.handlers.introduction import register_introduction
 from app.handlers.choose_universities import register_choose_vuz
 from app.handlers.choose_subjects import register_choose_subjects
 from app.handlers.choose_prioritets_for_criteria import register_prioritets_for_criteria
+from app.handlers.show_rating import register_show_rating
 from app.handlers.the_end import register_the_end
 
 
@@ -43,13 +44,14 @@ async def main():
     register_choose_vuz(dp)
     register_choose_subjects(dp)
     register_prioritets_for_criteria(dp)
+    register_show_rating(dp)
     register_the_end(dp)
 
     # установка команд
     await set_commands(bot)
 
     # начало работы
-    await dp.skip_updates() # потом надо будет убрать 
+    # await dp.skip_updates() # потом надо будет убрать 
     await dp.start_polling()
 
 
