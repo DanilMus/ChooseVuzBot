@@ -93,7 +93,7 @@ async def selected_criterion(message: types.Message, state: FSMContext):
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard= True)
     keyboard.add('Хорошо')
     
-    await message.answer('Поздравляю! Осталось только дождаться результатов. \nНачинаю обработку...\n\nP.s. Это займет, примерно, 10-15 минут.\nТак что можешь пока попить чайку.', reply_markup= keyboard)
+    await message.answer('Поздравляю! Осталось только дождаться результатов. \nНачинаю обработку...\n\nP.s. Это займет некоторое время.\nТак что можешь пока попить чайку.', reply_markup= keyboard)
     await CheckState.waiting_for_show_rating.set()
 
 
