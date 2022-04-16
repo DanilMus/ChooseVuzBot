@@ -54,32 +54,43 @@ async def criterion3(message: types.Message, state: FSMContext):
     await CheckState.waiting_for_select_criterion4.set()
 
 async def criterion4(message: types.Message, state: FSMContext):
-    text = '4. Поговорим об армии. Насколько тебе нужна военная кафедра?'
+    if message.text == '0':
+        await CheckState.waiting_for_select_criterion5.set()
+        async with state.proxy() as data:
+            data['chosen_criteria'].append(int(message.text))
+        return 
+
+    text = '4. А что насчет количества бюджетных мест для крутых специальностей?'
     await criterion(message, state, text)
     await CheckState.waiting_for_select_criterion5.set()
 
 async def criterion5(message: types.Message, state: FSMContext):
-    text = '5. Важно ли тебе, чтобы преподаватель уделял тебе время чаще? (Посмотрим сколько студентов приходится на одного учителя.)'
+    text = '5. Поговорим об армии. Насколько тебе нужна военная кафедра?'
     await criterion(message, state, text)
     await CheckState.waiting_for_select_criterion6.set()
 
 async def criterion6(message: types.Message, state: FSMContext):
-    text = '6. Есть также российские рейтинги ВУЗов. Важны ли тебе они?'
+    text = '6. Важно ли тебе, чтобы преподаватель уделял тебе время чаще? (Посмотрим сколько студентов приходится на одного учителя.)'
     await criterion(message, state, text)
     await CheckState.waiting_for_select_criterion7.set()
 
 async def criterion7(message: types.Message, state: FSMContext):
-    text = '7. А что насчет зарубежного рейтинга?\n(QS World University Rankings)'
+    text = '7. Есть также российские рейтинги ВУЗов. Важны ли тебе они?'
     await criterion(message, state, text)
     await CheckState.waiting_for_select_criterion8.set()
 
 async def criterion8(message: types.Message, state: FSMContext):
-    text = '8. Ценны ли тебе отзывы об этом ВУЗе?'
+    text = '8. А что насчет зарубежного рейтинга?\n(QS World University Rankings)'
     await criterion(message, state, text)
     await CheckState.waiting_for_select_criterion9.set()
 
 async def criterion9(message: types.Message, state: FSMContext):
-    text = '9. И последний пукт. Насколько общежитие имеет значение?'
+    text = '9. Ценны ли тебе отзывы об этом ВУЗе?'
+    await criterion(message, state, text)
+    await CheckState.waiting_for_select_criterion10.set()
+
+async def criterion10(message: types.Message, state: FSMContext):
+    text = '10. И последний пукт. Насколько общежитие имеет значение?'
     await criterion(message, state, text)
     await CheckState.waiting_for_selected_criterion.set()
 
@@ -108,5 +119,5 @@ def register_prioritets_for_criteria(dp: Dispatcher):
     dp.register_message_handler(criterion7, state= CheckState.waiting_for_select_criterion7)
     dp.register_message_handler(criterion8, state= CheckState.waiting_for_select_criterion8)
     dp.register_message_handler(criterion9, state= CheckState.waiting_for_select_criterion9)
-    # dp.register_message_handler(criterion10, state= CheckState.waiting_for_select_criterion10)
+    dp.register_message_handler(criterion10, state= CheckState.waiting_for_select_criterion10)
     dp.register_message_handler(selected_criterion, state= CheckState.waiting_for_selected_criterion)

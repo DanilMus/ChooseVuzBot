@@ -11,18 +11,28 @@ async def show_addtinal_info(message: types.Message, i, vuzes_rating_copy, vuzes
         if i == place:
             info = vuzes_data[vuz]
 
+            faculties = info[0]
+            faculties_of3max = info[1]
+
+            textAbout_faculties = ''
+            textAbout_faculties_of3max = ''
+
+            for faculty_name, faculty_info in faculties.items():
+                textAbout_faculties += f'      {faculty_name}: {faculty_info[0]}, {faculty_info[1]}\n'
+            
+            for faculty_name, faculty_info in faculties_of3max.items():
+                textAbout_faculties_of3max += f'      {faculty_name}: {faculty_info[0]}, {faculty_info[1]}\n'
+
             await message.answer(
                 f'ВУЗ: {vuz}\n'
-                f'  баллы на факультеты для поступления: {info[0]}\n'
-                f'  количество бюджетных мест на факультеты, доступные тебе: {info[1]}\n'
-                f'  баллы на крутые факультеты: {info[2]}\n'
-                f'  бюджетные места на крутые факультеты: {info[3]}\n'
-                f'  есть или нет военной кафедры (0 или 1): {info[4]}\n'
-                f'  количество учеников на одного учителя: {info[5]}\n'
-                f'  русский рейтинг: {info[6]}\n'
-                f'  зарубежный рейтинг: {info[7]}\n'
-                f'  отзывы: {info[8]}\n'
-                f'  общещитие есть или нет (0 или 1) + отзывы (делить на 10): {info[9]}\n'
+                f'-факультеты с баллами ЕГЭ и бюджетными местами на них:\n{textAbout_faculties}'
+                f'-крутые факультеты and баллы and бюджетные места на них:\n{textAbout_faculties_of3max}'
+                f'-есть или нет военной кафедры (0 или 1): {info[2]}\n'
+                f'-количество учеников на одного учителя: {info[3]}\n'
+                f'-русский рейтинг: {info[4]}\n'
+                f'-зарубежный рейтинг: {info[5]}\n'
+                f'-отзывы: {info[6]}\n'
+                f'-общещитие есть или нет (0 или 1) + отзывы (делить на 10): {info[7]}\n'
             )
 
             del vuzes_rating_copy[vuz]

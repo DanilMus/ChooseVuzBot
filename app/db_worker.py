@@ -70,3 +70,13 @@ class db_worker:
 
         with open('data/data.json','w',encoding='utf-8') as file:
             json.dump(data, file, indent= 4, ensure_ascii= False)
+    
+    @staticmethod
+    def update_info_about_vuz(name:str, info:list):
+        with open('data/data.json','r',encoding='utf-8') as file:
+            data = json.load(file)
+        
+        data[name][2] = info
+
+        with open('data/data.json','w',encoding='utf-8') as file:
+            json.dump(data, file, indent= 4, ensure_ascii= False)

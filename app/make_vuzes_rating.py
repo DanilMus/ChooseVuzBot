@@ -1,8 +1,32 @@
+def vuzes_data_without_faculties_names(vuzes_data:dict):
+    for vuz_name, vuz_info in vuzes_data.items():
+        EGE_and_budPl = vuz_info[0]
+        EGE_and_budPl_of3max = vuz_info[1]
+
+        EGE = []
+        budPl = []
+        for val in EGE_and_budPl.values():
+            EGE.append(val[0])
+            budPl.append(val[1])
+        
+        EGE_of3max = []
+        budPl_of3max = []
+        for val in EGE_and_budPl_of3max.values():
+            EGE_of3max.append(val[0])
+            budPl_of3max.append(val[1])
+        
+        vuzes_data[vuz_name] = [EGE, budPl, EGE_of3max, budPl_of3max] + vuz_info[2:]
+
+    return vuzes_data
+
+
 def make_vuzes_rating(criteria:list, vuzes_data:dict):
     vuzes_rating = {}
 
+    vuzes_data = vuzes_data_without_faculties_names(vuzes_data)
+
     # сначала работаем с EGE, budPl, EGE_of3max, budPl_of3ma
-    for name, vuz_info in vuzes_data.items(): 
+    for vuz_name, vuz_info in vuzes_data.items(): 
         len_crit = len(vuz_info)
         EGE, EGE_now = vuz_info[0], criteria[0]
         budPl = vuz_info[1]
@@ -45,7 +69,7 @@ def make_vuzes_rating(criteria:list, vuzes_data:dict):
         vuz_info[2] = EGE_of3max
         vuz_info[3] = budPl_of3max
 
-        vuzes_rating[name] = [faculCount_whereCan, faculCount]
+        vuzes_rating[vuz_name] = [faculCount_whereCan, faculCount]
     
 
     # составление средних значений
@@ -70,17 +94,17 @@ def make_vuzes_rating(criteria:list, vuzes_data:dict):
     obsh_mid = mid[9]
 
     #  посчет рейтинга
-    for name, vuz_info in vuzes_data.items(): 
+    for vuz_name, vuz_info in vuzes_data.items(): 
         EGE, EGE_crit = vuz_info[0], criteria[1]
         budPl, budPl_crit = vuz_info[1], criteria[2]
         EGE_of3max, EGE_of3max_crit = vuz_info[2], criteria[3]
-        budPl_of3max, budPl_of3max_crit = vuz_info[3], criteria[2]
-        militDep,  militDep_crit = vuz_info[4], criteria[4]
-        studToTeach, studToTeach_crit = vuz_info[5], criteria[5]
-        rating_rus, rating_rus_crit = vuz_info[6], criteria[6]
-        rating_eng, rating_eng_crit = vuz_info[7], criteria[7]
-        reviews, reviews_crit = vuz_info[8], criteria[8]
-        obsh, obsh_crit = vuz_info[9], criteria[9]
+        budPl_of3max, budPl_of3max_crit = vuz_info[3], criteria[4]
+        militDep,  militDep_crit = vuz_info[4], criteria[5]
+        studToTeach, studToTeach_crit = vuz_info[5], criteria[6]
+        rating_rus, rating_rus_crit = vuz_info[6], criteria[7]
+        rating_eng, rating_eng_crit = vuz_info[7], criteria[8]
+        reviews, reviews_crit = vuz_info[8], criteria[9]
+        obsh, obsh_crit = vuz_info[9], criteria[10]
 
 
         score = 0
@@ -113,7 +137,7 @@ def make_vuzes_rating(criteria:list, vuzes_data:dict):
                 score += middle_criteria / vuz_criteria * priority_criteria
 
         
-        vuzes_rating[name] = [score] + vuzes_rating[name]
+        vuzes_rating[vuz_name] = [score] + vuzes_rating[vuz_name]
 
 
     return vuzes_rating
