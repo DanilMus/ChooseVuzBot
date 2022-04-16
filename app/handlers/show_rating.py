@@ -38,12 +38,14 @@ async def show_rating(message: types.Message, state: FSMContext):
         check = db_worker.get_vuz(name)
         if check: # есть ли ВУЗ в базе
             # проверяем соответствуют получение данные с базой
-            if (check[0] != [tabi[i], vuzo[i], uche[i]]) and (check[1] <= 10) and (check[2] != vuzes_data[name]):
-                db_worker.download_new_vuz(name, [tabi[i], vuzo[i], uche[i]], vuzes_data[name][4:])
+            if (check[0] != [tabi[i], vuzo[i], uche[i]]) and (check[1] <= 10): # какой-нибудь пользователь, однажды, ввел что-то не так
+                db_worker.download_new_vuz(name, [tabi[i], vuzo[i], uche[i]], vuzes_data[name][2:])
+            elif (check[2] != vuzes_data[name][2:]): # данные на сайтах обновились
+                db_worker.update_info_about_vuz(name, vuzes_data[name][2:])
             else:
                 db_worker.update_count_of_vuz(name)
         else: # если ВУЗа нет в базе
-            db_worker.download_new_vuz(name, [tabi[i], vuzo[i], uche[i]], vuzes_data[name][4:])
+            db_worker.download_new_vuz(name, [tabi[i], vuzo[i], uche[i]], vuzes_data[name][2:])
     
     ####### 1.01 часть #######################
     ## (обработаем то, что ввели из базы) ####
@@ -75,12 +77,13 @@ async def show_rating(message: types.Message, state: FSMContext):
     ###### (вывод рейтинга) ##################
     await message.answer(
         'Рейтинг готов!\n'
-        'Вывод я замедлю, чтобы смотрелось эпичнее.'
+        'Вывод я замедлю, чтобы смотрелось эпичнее.',
+        reply_markup= types.ReplyKeyboardRemove()
     )
     await asyncio.sleep(3)
     await message.answer(
         'Вывод выглядит так:\n'
-        '"Место": "ВУЗ" - "баллы, которые набрал" '
+        '"Место": "ВУЗ и ссылка на него" - "баллы, которые набрал" '
         '- "на какое количество факультетов можешь поступить" / "из скольки"'
     )
     await asyncio.sleep(5)
@@ -91,7 +94,8 @@ async def show_rating(message: types.Message, state: FSMContext):
         for vuz, score2 in vuzes_rating.items():
             if score1[0] == score2[0]:
                 await message.answer(
-                    f'{i} место: {vuz} - {round(score2[0], 1)} - {score2[1]} / {score2[2]}'
+                    f'{i} место: <a href="{vuzes_data[vuz][-1]}">{vuz}</a> - {round(score2[0], 1)} - {score2[1]} / {score2[2]}',
+                    disable_web_page_preview= True
                 )
                 del vuzes_rating[vuz]
                 vuzes_rating_copy[vuz] = i

@@ -5,6 +5,7 @@ from app.criteria_async.rating import rating_abro, rating_russ
 from app.criteria_async.obsh import obsh
 from app.criteria_async.reviews import reviews
 from app.criteria_async.EGE_and_budPl import EGE_and_budPl
+from app.criteria_async.vuz_url import vuz_url
 
 import asyncio
 
@@ -19,31 +20,49 @@ class VUZ:
 
         self.loop = asyncio.get_event_loop()
 
-    def do__of_3max(self, EGE, bud_pl):
-        EGE_of_3max = [0, 0, 0]
-        bud_pl_of_3max = [0, 0, 0]
+    def do__stt(stt_u, stt_v):
+        if (stt_u == 0) and (stt_v == 0):
+            return 0
+        if stt_u == 0:
+            return stt_v
+        if stt_v == 0:
+            return stt_u
+        return round((stt_u + stt_v) / 2, 1)
 
-        for i in range(len(EGE)):
-            bal = EGE[i]
-            bud = bud_pl[i]
+    def do__of_3max(self, faculties):
+        faculties_of3max = {}
+        faculties_names_of3max = ['', '', '']
+        EGE_of3max = [0, 0, 0]
+        budPl_of3max = [0, 0, 0]
 
-            if bal > EGE_of_3max[0]:
-                EGE_of_3max[0] = bal
-                bud_pl_of_3max[0] = bud
-            elif bal > EGE_of_3max[1]:
-                EGE_of_3max[1] = bal
-                bud_pl_of_3max[1] = bud
-            elif bal > EGE_of_3max[2]:
-                EGE_of_3max[2] = bal
-                bud_pl_of_3max[2] = bud
+        for faculty_name, faculty_info in faculties.items():
+            bal = faculty_info[0]
+            bud = faculty_info[1]
 
-        return EGE_of_3max, bud_pl_of_3max
+            if bal > EGE_of3max[0]:
+                EGE_of3max[0] = bal
+                budPl_of3max[0] = bud
+                faculties_names_of3max[0] = faculty_name
+            elif bal > EGE_of3max[1]:
+                EGE_of3max[1] = bal
+                budPl_of3max[1] = bud
+                faculties_names_of3max[1] = faculty_name
+            elif bal > EGE_of3max[2]:
+                EGE_of3max[2] = bal
+                budPl_of3max[2] = bud
+                faculties_names_of3max[2] = faculty_name
+        
+        for i in range(len(faculties_names_of3max)):
+            if (faculties_names_of3max[i]) and (EGE_of3max[i]) and (budPl_of3max[i]):
+                faculties_of3max[faculties_names_of3max[i]] = [EGE_of3max[i], budPl_of3max[i]]
+
+        return faculties_of3max
 
 
     async def async_full_info(self):
         try:
             name = await vuz_name(self.vuzo)
-            EGE, budPl = await EGE_and_budPl(self.vuzo, self.subj)
+            faculties = await EGE_and_budPl(self.vuzo, self.subj)
             militDep = await militDepartment(self.vuzo)
             stt_v = await studToTeach_vuzo(self.vuzo)
             stt_u = await studToTeach_uche(self.uche)
@@ -51,26 +70,27 @@ class VUZ:
             rating_eng = await rating_abro(self.uche)
             obsh_ = await obsh(self.tabi)
             reviews_ = await reviews(self.tabi)
+            vuz_url_ = await vuz_url(self.tabi)
             
         except Exception as ex:
             print(ex)
             return 'Exception'
 
-        studToTeach = round((stt_u + stt_v) / 2, 1)
-        EGE_of3max, budPl_of3max = self.do__of_3max(EGE, budPl)
+        studToTeach = self.do__stt(stt_u, stt_v)
+        faculties_of3max = self.do__of_3max(faculties)
 
-        return [name, EGE, budPl, EGE_of3max, budPl_of3max, militDep, studToTeach, rating_rus, rating_eng, reviews_, obsh_]
+        return [name, faculties, faculties_of3max, militDep, studToTeach, rating_rus, rating_eng, reviews_, obsh_, vuz_url_]
     
     def full_info(self):
         return self.loop.run_until_complete(self.async_full_info())
     
     async def async_EGE_and_budPl(self):
         try: 
-            EGE, budPl = await EGE_and_budPl(self.vuzo, self.subj)
+            faculties = await EGE_and_budPl(self.vuzo, self.subj)
         except Exception as ex:
             print(ex)
             return 'Exception'
 
-        EGE_of3max, budPl_of3max = self.do__of_3max(EGE, budPl)
+        faculties_of3max = self.do__of_3max(faculties)
 
-        return [EGE, budPl, EGE_of3max, budPl_of3max]
+        return [faculties, faculties_of3max]

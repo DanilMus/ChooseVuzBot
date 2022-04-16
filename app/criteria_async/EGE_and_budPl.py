@@ -1,6 +1,14 @@
 from bs4 import BeautifulSoup
 import aiohttp
 
+def dict_plus_dict(a:dict, b:dict):
+    c = {}
+    for key, val in a.items():
+        c[key] = val
+    for key, val in b.items():
+        c[key] = val
+    return c
+
 def do_new_url(url, subj):
     new_url = url + '/poege/'
     if "Математика" in subj:
@@ -52,13 +60,13 @@ async def EGE_and_bud_pl_count(url, session):
     async with session.get(url) as src:
         soup = BeautifulSoup(await src.text(), 'lxml')
 
-        info = soup.find_all(class_='col-md-4 itemSpecAllParamWHide newbl')
-
+        faculties = soup.find_all(class_='col-md-12 shadowForItem')
         bal, bud = 0, 0
-        bals, buds = [], []
+        faculties_dict = {}
 
-        for elems in info[1::3]:
-            elem = elems.find_all(class_='tooltipq')
+        for faculty in faculties:
+            faculty_info = faculty.find_all(class_='col-md-4 itemSpecAllParamWHide newbl')[1]
+            elem = faculty_info.find_all(class_='tooltipq')
 
             if (elem) and (elem[0]) and (elem[2]):
                 bal = elem[0].text.replace('минимальный суммарный проходной балл на бюджет по специальности','').strip('от ')
@@ -72,12 +80,13 @@ async def EGE_and_bud_pl_count(url, session):
                     bud = int(bud)
                 else: 
                     bud = 0
+
+                faculty_name = faculty.find(class_= 'itemSpecAllinfo').find('div').text.strip()
                 
                 if (bal) and (bud):
-                    bals.append(bal)
-                    buds.append(bud)
+                    faculties_dict[faculty_name] = [bal, bud]
         
-        return bals, buds
+        return faculties_dict
 
 
 # главная функция
@@ -99,14 +108,13 @@ async def EGE_and_budPl(url, subj):
             egecombs = [new_url] # если нет комбинаций, то просто обычная ссылка
 
 
-        bals, buds = [], []
+        faculties = {}
         # перебор по возможным комбинациям
         for new_url in egecombs:
             pages = find_pagination(soup)
             # перебор по страницам (если не будет, то просто возмет 1 стр.)
             for i in range(pages):
-                h1, h2 = await EGE_and_bud_pl_count(f'{new_url}?page={i+1}', session)
-                bals += h1
-                buds += h2
+                part_faculties = await EGE_and_bud_pl_count(f'{new_url}?page={i+1}', session)
+                faculties = dict_plus_dict(faculties, part_faculties)
 
-        return bals, buds
+        return faculties

@@ -5,33 +5,10 @@ from app.states import CheckState
 
 from asyncio import sleep
 
-# самое начало, вводит пользователя в курс дела
-async def begining(message: types.Message, state: FSMContext):
-    await state.finish()
-
-    keyboard = types.ReplyKeyboardMarkup(resize_keyboard= True)
-    buttom = "Okay. Let's go!"
-    keyboard.add(buttom)
-
-    await message.answer(
-        'Привет!\n'
-        'Я помогу тебе выбрать ВУЗы, ' 
-        'но только если у тебя есть список ВУЗов, '
-        'и ты не можешь выбрать, в какие поступать.\nТы мне пишешь, '
-        'куда  хочешь поступить, по каким предметам, ' 
-        'и какие критерии тебе важны. '
-        'А я тебе топ твоих ВУЗов с баллами по этим критериям.\n\n'
-        'P.s. В левом нижнем углу есть 3 полоски, если на них нажать, то получишь список команд.',
-        reply_markup= keyboard
-    )
-
-    await CheckState.waiting_for_after_begining.set()
-
 
 # дает пользовтелю инструкции
-async def after_begining(message: types.Message, state: FSMContext):
-    await message.answer("Окей", reply_markup= types.ReplyKeyboardRemove())
-    await sleep(0.2)
+async def begining(message: types.Message, state: FSMContext):
+    await state.finish()
 
     keyboard_inline = types.InlineKeyboardMarkup()
     keyboard_inline.add(types.InlineKeyboardButton(
@@ -46,9 +23,9 @@ async def after_begining(message: types.Message, state: FSMContext):
         'https://tabiturient.ru\n'
         'https://vuzopedia.ru\n'
         'https://ucheba.ru/for-abiturients/vuz\n'
-        "(Надо зайти на сайт, ввести название ВУЗа, зайти на страничку и скопировать ссылку, "
-        "потом просто отправить сюда.)\n\n"
-        "Этим ты поможешь нам расширять базу данных.",
+        "<i>(Надо зайти на сайт, ввести название ВУЗа, зайти на страничку и скопировать ссылку, "
+        "потом просто отправить сюда.)</i>\n\n"
+        "<i>Этим ты поможешь нам расширять базу данных.</i>",
         reply_markup= keyboard_inline,
         disable_web_page_preview= True
     )
@@ -71,4 +48,3 @@ async def after_begining(message: types.Message, state: FSMContext):
 
 def register_introduction(dp: Dispatcher):
     dp.register_message_handler(begining, commands= 'start', state= '*')
-    dp.register_message_handler(after_begining, state= CheckState.waiting_for_after_begining)
