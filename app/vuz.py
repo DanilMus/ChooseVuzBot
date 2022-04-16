@@ -5,6 +5,7 @@ from app.criteria_async.rating import rating_abro, rating_russ
 from app.criteria_async.obsh import obsh
 from app.criteria_async.reviews import reviews
 from app.criteria_async.EGE_and_budPl import EGE_and_budPl
+from app.criteria_async.vuz_url import vuz_url
 
 import asyncio
 
@@ -60,6 +61,7 @@ class VUZ:
             rating_eng = await rating_abro(self.uche)
             obsh_ = await obsh(self.tabi)
             reviews_ = await reviews(self.tabi)
+            vuz_url_ = await vuz_url(self.tabi)
             
         except Exception as ex:
             print(ex)
@@ -68,7 +70,7 @@ class VUZ:
         studToTeach = round((stt_u + stt_v) / 2, 1)
         faculties_of3max = self.do__of_3max(faculties)
 
-        return [name, faculties, faculties_of3max, militDep, studToTeach, rating_rus, rating_eng, reviews_, obsh_]
+        return [name, faculties, faculties_of3max, militDep, studToTeach, rating_rus, rating_eng, reviews_, obsh_, vuz_url_]
     
     def full_info(self):
         return self.loop.run_until_complete(self.async_full_info())

@@ -73,9 +73,9 @@ def make_vuzes_rating(criteria:list, vuzes_data:dict):
     
 
     # составление средних значений
-    mid = [0] * len_crit
+    mid = [0] * (len_crit -1)
     for vuz_info in vuzes_data.values():
-        for i in range(len(vuz_info)):
+        for i in range(len(vuz_info) -1):
             mid[i] += vuz_info[i]
 
     len_vuzes = len(vuzes_data)

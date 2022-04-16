@@ -54,12 +54,6 @@ async def criterion3(message: types.Message, state: FSMContext):
     await CheckState.waiting_for_select_criterion4.set()
 
 async def criterion4(message: types.Message, state: FSMContext):
-    if message.text == '0':
-        await CheckState.waiting_for_select_criterion5.set()
-        async with state.proxy() as data:
-            data['chosen_criteria'].append(int(message.text))
-        return 
-
     text = '4. А что насчет количества бюджетных мест для крутых специальностей?'
     await criterion(message, state, text)
     await CheckState.waiting_for_select_criterion5.set()
@@ -104,7 +98,7 @@ async def selected_criterion(message: types.Message, state: FSMContext):
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard= True)
     keyboard.add('Хорошо')
     
-    await message.answer('Поздравляю! Осталось только дождаться результатов. \nНачинаю обработку...\n\nP.s. Это займет некоторое время.\nТак что можешь пока попить чайку.', reply_markup= keyboard)
+    await message.answer('Поздравляю! Осталось только дождаться результатов. \nНачинаю обработку...\n\n<i>P.s. Это займет некоторое время.</i>', reply_markup= keyboard)
     await CheckState.waiting_for_show_rating.set()
 
 

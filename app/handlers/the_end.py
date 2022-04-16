@@ -24,15 +24,15 @@ async def show_addtinal_info(message: types.Message, i, vuzes_rating_copy, vuzes
                 textAbout_faculties_of3max += f'      {faculty_name}: {faculty_info[0]}, {faculty_info[1]}\n'
 
             await message.answer(
-                f'ВУЗ: {vuz}\n'
-                f'-факультеты с баллами ЕГЭ и бюджетными местами на них:\n{textAbout_faculties}'
-                f'-крутые факультеты and баллы and бюджетные места на них:\n{textAbout_faculties_of3max}'
-                f'-есть или нет военной кафедры (0 или 1): {info[2]}\n'
-                f'-количество учеников на одного учителя: {info[3]}\n'
-                f'-русский рейтинг: {info[4]}\n'
-                f'-зарубежный рейтинг: {info[5]}\n'
-                f'-отзывы: {info[6]}\n'
-                f'-общещитие есть или нет (0 или 1) + отзывы (делить на 10): {info[7]}\n'
+                f'<b>>ВУЗ</b>: <a href="{vuzes_data[vuz][-1]}">{vuz}</a>\n'
+                f'<b>>факультеты с баллами ЕГЭ и бюджетными местами на них:</b>\n{textAbout_faculties}'
+                f'<b>>крутые факультеты and баллы and бюджетные места на них:</b>\n{textAbout_faculties_of3max}'
+                f'<b>>есть или нет военной кафедры (0 или 1):</b> {info[2]}\n'
+                f'<b>>количество учеников на одного учителя:</b> {info[3]}\n'
+                f'<b>>русский рейтинг:</b> {info[4]}\n'
+                f'<b>>зарубежный рейтинг:</b> {info[5]}\n'
+                f'<b>>отзывы:</b> {info[6]}\n'
+                f'<b>>общещитие есть или нет (0 или 1) + отзывы (делить на 10):</b> {info[7]}\n'
             )
 
             del vuzes_rating_copy[vuz]
@@ -77,7 +77,7 @@ async def additional_info_(message: types.Message, state: FSMContext):
 
 async def the_end(message: types.Message, state: FSMContext):
     await message.answer(
-        'Большое спасибо, что воспользовался мной! )))))))',
+        'Семпай, Большое спасибо, что воспользовался мной! )))))))',
         reply_markup= types.ReplyKeyboardRemove()
     )
     await state.finish()

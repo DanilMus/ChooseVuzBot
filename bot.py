@@ -3,7 +3,7 @@ import logging
 
 from config.bot_config import token
 
-from aiogram import Bot, Dispatcher
+from aiogram import Bot, Dispatcher, types
 from aiogram.types import BotCommand
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 
@@ -36,7 +36,7 @@ async def main():
     logger.error('Bot starts work.')
 
     # инициализация бота и диспетчера
-    bot = Bot(token= token)
+    bot = Bot(token= token, parse_mode= types.ParseMode.HTML)
     dp = Dispatcher(bot, storage= MemoryStorage())
 
     # регистриация обработчиков

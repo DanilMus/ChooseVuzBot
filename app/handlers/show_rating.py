@@ -83,7 +83,7 @@ async def show_rating(message: types.Message, state: FSMContext):
     await asyncio.sleep(3)
     await message.answer(
         'Вывод выглядит так:\n'
-        '"Место": "ВУЗ" - "баллы, которые набрал" '
+        '"Место": "ВУЗ и ссылка на него" - "баллы, которые набрал" '
         '- "на какое количество факультетов можешь поступить" / "из скольки"'
     )
     await asyncio.sleep(5)
@@ -94,7 +94,8 @@ async def show_rating(message: types.Message, state: FSMContext):
         for vuz, score2 in vuzes_rating.items():
             if score1[0] == score2[0]:
                 await message.answer(
-                    f'{i} место: {vuz} - {round(score2[0], 1)} - {score2[1]} / {score2[2]}'
+                    f'{i} место: <a href="{vuzes_data[vuz][-1]}">{vuz}</a> - {round(score2[0], 1)} - {score2[1]} / {score2[2]}',
+                    disable_web_page_preview= True
                 )
                 del vuzes_rating[vuz]
                 vuzes_rating_copy[vuz] = i
