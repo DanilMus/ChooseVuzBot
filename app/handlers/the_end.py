@@ -57,7 +57,12 @@ async def additional_info(message: types.Message, state: FSMContext):
         await state.update_data(i= i-1)
         await CheckState.waiting_for_additional_info_.set()
     else:
-        await the_end(message, state)
+        await message.answer(
+            'Можешь, пожалуйста, написать все, что не понравилось? <i>(Я все равно не узнаю, кто ты, так что домой к тебе не приду))</i>',
+            reply_markup= types.ReplyKeyboardRemove()
+        )
+        await CheckState.waiting_for_the_end.set()
+        # await the_end(message, state)
 
 async def additional_info_(message: types.Message, state: FSMContext):
     if message.text != 'Дальше':
@@ -72,12 +77,17 @@ async def additional_info_(message: types.Message, state: FSMContext):
     if i - 1 != 0:
         await state.update_data(i= i-1)
     else:
+        await message.answer(
+            'Можешь, пожалуйста, написать все, что не понравилось? <i>(Я все равно не узнаю, кто ты, так что домой к тебе не приду))</i>',
+            reply_markup= types.ReplyKeyboardRemove()
+        )
         await CheckState.waiting_for_the_end.set()
 
 
 async def the_end(message: types.Message, state: FSMContext):
+    print(message.text)
     await message.answer(
-        'Семпай, Большое спасибо, что воспользовался мной! )))))))',
+        'Семпай, Большое Cпасибо, что воспользовался мной! )))))))',
         reply_markup= types.ReplyKeyboardRemove()
     )
     await state.finish()

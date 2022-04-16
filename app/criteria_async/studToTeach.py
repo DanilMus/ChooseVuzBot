@@ -33,12 +33,13 @@ async def studToTeach_vuzo(url):
             if students.isdigit():
                 students = int(students)
             else:
-                students = 1
+                return 0
+
             teachers = stud_and_teac[6].text.strip('\nПреподавателей ')
             if teachers.isdigit():
                 teachers = int(teachers)
             else:
-                teachers = 1
+                return 0
 
             stud_to_teach = round(students / teachers, 2)
         else:

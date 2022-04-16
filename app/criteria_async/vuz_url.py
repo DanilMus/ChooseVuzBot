@@ -8,7 +8,12 @@ async def vuz_url(url):
         src = await session.get(new_url)
 
         soup = BeautifulSoup(await src.text(), 'lxml')
-
-        vuz_url = soup.find(class_='p40 pm40 obram obramvuz1').find('a').get('href')
+        
+        try:
+            vuz_url = soup.find(class_='p40 pm40 obram obramvuz1').find('a').get('href')
+        except Exception as ex:
+            print(ex)
+            print('Скорее всего ссылки на ВУЗ не нашлось на сайте.')
+            vuz_url = ''
 
         return vuz_url

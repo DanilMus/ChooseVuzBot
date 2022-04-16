@@ -20,6 +20,15 @@ class VUZ:
 
         self.loop = asyncio.get_event_loop()
 
+    def do__stt(stt_u, stt_v):
+        if (stt_u == 0) and (stt_v == 0):
+            return 0
+        if stt_u == 0:
+            return stt_v
+        if stt_v == 0:
+            return stt_u
+        return round((stt_u + stt_v) / 2, 1)
+
     def do__of_3max(self, faculties):
         faculties_of3max = {}
         faculties_names_of3max = ['', '', '']
@@ -67,7 +76,7 @@ class VUZ:
             print(ex)
             return 'Exception'
 
-        studToTeach = round((stt_u + stt_v) / 2, 1)
+        studToTeach = self.do__stt(stt_u, stt_v)
         faculties_of3max = self.do__of_3max(faculties)
 
         return [name, faculties, faculties_of3max, militDep, studToTeach, rating_rus, rating_eng, reviews_, obsh_, vuz_url_]
