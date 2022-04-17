@@ -8,6 +8,9 @@ from app.criteria_async.EGE_and_budPl import EGE_and_budPl
 from app.criteria_async.vuz_url import vuz_url
 
 import asyncio
+import logging 
+
+logger = logging.getLogger(__name__)
 
 # я говорю все, что хочещь знать о ВУЗе, специально для тебя
 class VUZ:
@@ -73,7 +76,7 @@ class VUZ:
             vuz_url_ = await vuz_url(self.tabi)
             
         except Exception as ex:
-            print(ex)
+            logger.warning('Ошибка на стороннем сервере.')
             return 'Exception'
 
         studToTeach = self.do__stt(stt_u, stt_v)
@@ -88,7 +91,7 @@ class VUZ:
         try: 
             faculties = await EGE_and_budPl(self.vuzo, self.subj)
         except Exception as ex:
-            print(ex)
+            logger.warning('Ошибка на стороннем сервере.')
             return 'Exception'
 
         faculties_of3max = self.do__of_3max(faculties)

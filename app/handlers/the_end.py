@@ -2,9 +2,11 @@ from aiogram import types, Dispatcher
 from aiogram.dispatcher.storage import FSMContext
 
 import asyncio
+import logging
 
 from app.states import CheckState
 
+logger = logging.getLogger(__name__)
 
 async def show_addtinal_info(message: types.Message, i, vuzes_rating_copy, vuzes_data):
     for vuz, place in vuzes_rating_copy.items():
@@ -85,7 +87,7 @@ async def additional_info_(message: types.Message, state: FSMContext):
 
 
 async def the_end(message: types.Message, state: FSMContext):
-    print(message.text)
+    logger.info(f'Отзыв: \n{message.text}')
     await message.answer(
         'Семпай, Большое Cпасибо, что воспользовался мной! )))))))',
         reply_markup= types.ReplyKeyboardRemove()
