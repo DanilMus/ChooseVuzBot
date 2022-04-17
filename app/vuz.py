@@ -20,7 +20,7 @@ class VUZ:
 
         self.loop = asyncio.get_event_loop()
 
-    def do__stt(stt_u, stt_v):
+    def do__stt(self, stt_u, stt_v):
         if (stt_u == 0) and (stt_v == 0):
             return 0
         if stt_u == 0:
