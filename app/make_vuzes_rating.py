@@ -59,14 +59,14 @@ def make_vuzes_rating(criteria:list, vuzes_data:dict):
                 faculCount_whereCan_of3max += 1
                 buds_of3max += bud
         
-        EGE = faculCount_whereCan
+        faculties = faculCount_whereCan
         budPl = buds
-        EGE_of3max = faculCount_whereCan_of3max
+        faculties_of3max = faculCount_whereCan_of3max
         budPl_of3max = buds_of3max
 
-        vuz_info[0] = EGE
+        vuz_info[0] = faculties
         vuz_info[1] = budPl
-        vuz_info[2] = EGE_of3max
+        vuz_info[2] = faculties_of3max
         vuz_info[3] = budPl_of3max
 
         vuzes_rating[vuz_name] = [faculCount_whereCan, faculCount]
@@ -82,9 +82,9 @@ def make_vuzes_rating(criteria:list, vuzes_data:dict):
     for i in range(len(mid)):
         mid[i] /= len_vuzes
     
-    EGE_mid = mid[0]
+    faculties_mid = mid[0]
     budPl_mid = mid[1]
-    EGE_of3max_mid = mid[2]
+    faculties_of3max_mid = mid[2]
     budPl_of3max_mid = mid[3]
     militDep_mid = mid[4]
     studToTeach_mid = mid[5]
@@ -95,9 +95,9 @@ def make_vuzes_rating(criteria:list, vuzes_data:dict):
 
     #  посчет рейтинга
     for vuz_name, vuz_info in vuzes_data.items(): 
-        EGE, EGE_crit = vuz_info[0], criteria[1]
+        faculties, faculties_crit = vuz_info[0], criteria[1]
         budPl, budPl_crit = vuz_info[1], criteria[2]
-        EGE_of3max, EGE_of3max_crit = vuz_info[2], criteria[3]
+        faculties_of3max, faculties_of3max_crit = vuz_info[2], criteria[3]
         budPl_of3max, budPl_of3max_crit = vuz_info[3], criteria[4]
         militDep,  militDep_crit = vuz_info[4], criteria[5]
         studToTeach, studToTeach_crit = vuz_info[5], criteria[6]
@@ -112,12 +112,12 @@ def make_vuzes_rating(criteria:list, vuzes_data:dict):
         # разделяем на:
         #   если чем больше тем лучше, то знач / ср.знач. (vuzes_data / middle)
         #   если чем меньше тем лучше, то ср.знач. / знач. (middle / vuzes_data)
-        if_bigger_thanBetter = [budPl, budPl_of3max, militDep, reviews, obsh]
-        if_lower_thanBetter = [EGE, EGE_of3max, studToTeach, rating_rus, rating_eng]
-        if_bigger_thanBetter_mid = [budPl_mid, budPl_of3max_mid, militDep_mid, reviews_mid, obsh_mid]
-        if_lower_thanBetter_mid =  [EGE_mid, EGE_of3max_mid, studToTeach_mid, rating_rus_mid, rating_eng_mid]
-        if_bigger_thanBetter_crit = [budPl_crit, budPl_of3max_crit, militDep_crit, reviews_crit, obsh_crit]
-        if_lower_thanBetter_crit = [EGE_crit, EGE_of3max_crit, studToTeach_crit, rating_rus_crit, rating_eng_crit]
+        if_bigger_thanBetter = [faculties, faculties_of3max, budPl, budPl_of3max, militDep, reviews, obsh]
+        if_lower_thanBetter = [studToTeach, rating_rus, rating_eng]
+        if_bigger_thanBetter_mid = [faculties_mid, faculties_of3max_mid, budPl_mid, budPl_of3max_mid, militDep_mid, reviews_mid, obsh_mid]
+        if_lower_thanBetter_mid =  [studToTeach_mid, rating_rus_mid, rating_eng_mid]
+        if_bigger_thanBetter_crit = [faculties_crit, faculties_of3max_crit, budPl_crit, budPl_of3max_crit, militDep_crit, reviews_crit, obsh_crit]
+        if_lower_thanBetter_crit = [studToTeach_crit, rating_rus_crit, rating_eng_crit]
 
         # если чем больше тем лучше, то знач / ср.знач. * приоритет (vuzes_data / middle) *  priority
         for i in range(len(if_bigger_thanBetter)):

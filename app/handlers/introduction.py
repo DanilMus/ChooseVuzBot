@@ -15,6 +15,7 @@ async def begining(message: types.Message, state: FSMContext):
         text= 'Посмотреть ВУЗы в базе',
         switch_inline_query_current_chat=''
     ))
+    await message.answer('Привет! )))))', reply_markup= types.ReplyKeyboardRemove())
     await message.answer(
         'Начнем. Я должен узнать, куда ты хочешь поступить. '
         'Ты можешь посмотреть, какие ВУЗы есть в базе данных и указать их. '
