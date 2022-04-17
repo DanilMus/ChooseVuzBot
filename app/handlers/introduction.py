@@ -17,7 +17,7 @@ async def begining(message: types.Message, state: FSMContext):
     ))
     await message.answer('Привет! )))))', reply_markup= types.ReplyKeyboardRemove())
     await message.answer(
-        'Начнем. Я должен узнать, куда ты хочешь поступить. '
+        'Начнем. Вначале я должен узнать, куда ты хочешь поступить. '
         'Ты можешь посмотреть, какие ВУЗы есть в базе данных и указать их. '
         'Если какого-то ВУЗа нет, то надо будет указать 3 ссылки на него. '
         'С этих 3-х сайтов:\n'

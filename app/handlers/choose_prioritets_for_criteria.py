@@ -13,7 +13,7 @@ async def criterion(message: types.Message, state: FSMContext, text):
 
 async def EGE(message: types.Message, state: FSMContext):
     await message.answer(
-        'Сколько баллов ЕГЭ набрал/набираешь?',
+        'Сколько баллов ЕГЭ набрал/набираешь в сумме?',
         reply_markup= types.ReplyKeyboardRemove()
     )
     await CheckState.waiting_for_select_criterion1.set()
