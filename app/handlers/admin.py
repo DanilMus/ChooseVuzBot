@@ -12,7 +12,7 @@ async def users(message: types.Message, state: FSMContext):
     await state.finish()
 
     if message.from_user.id != admin:
-        return message.answer('Упс... Власть не в твоих руках.')
+        return await message.answer('Упс... Власть не в твоих руках.')
     
     users = db_worker.get_users()
     await message.answer(f'<b>Хозяин.</b>\nВот количество пользователей на данный момент <b>{len(users)}</b>.')
@@ -21,7 +21,7 @@ async def send_message(message: types.Message, state: FSMContext):
     await state.finish()
 
     if message.from_user.id != admin:
-        return message.answer('Больно многово захотел.')
+        return await message.answer('Больно многово захотел.')
     
     await message.answer('<b>Хозяин.</b>\nЧто хотите послать подданным?')
 
