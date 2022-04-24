@@ -2,6 +2,7 @@ from aiogram import types, Dispatcher
 from aiogram.dispatcher.storage import FSMContext
 
 from app.states import CheckState
+from app.db_worker import db_worker
 
 from asyncio import sleep
 
@@ -9,6 +10,8 @@ from asyncio import sleep
 # дает пользовтелю инструкции
 async def begining(message: types.Message, state: FSMContext):
     await state.finish()
+
+    db_worker.add_user(message.from_user.id)
 
     keyboard_inline = types.InlineKeyboardMarkup()
     keyboard_inline.add(types.InlineKeyboardButton(
@@ -25,7 +28,7 @@ async def begining(message: types.Message, state: FSMContext):
         'https://vuzopedia.ru\n'
         'https://ucheba.ru/for-abiturients/vuz\n'
         "<i>(Надо зайти на сайт, ввести название ВУЗа, зайти на страничку и скопировать ссылку, "
-        "потом просто отправить сюда.)</i>\n\n"
+        "потом просто отправить сюда. Некоторое не понимают, но <b>1 ВУЗ = 3 ссылки</b>, к сожалению для вас.)</i>\n\n"
         "<i>Этим ты поможешь нам расширять базу данных.</i>",
         reply_markup= keyboard_inline,
         disable_web_page_preview= True

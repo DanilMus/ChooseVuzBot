@@ -14,6 +14,8 @@ from app.handlers.choose_prioritets_for_criteria import register_prioritets_for_
 from app.handlers.show_rating import register_show_rating
 from app.handlers.the_end import register_the_end
 
+from app.handlers.admin import register_admin
+
 
 logger = logging.getLogger(__name__)
 
@@ -40,12 +42,15 @@ async def main():
     dp = Dispatcher(bot, storage= MemoryStorage())
 
     # регистриация обработчиков
+    register_admin(dp)
+    
     register_introduction(dp)
     register_choose_vuz(dp)
     register_choose_subjects(dp)
     register_prioritets_for_criteria(dp)
     register_show_rating(dp)
     register_the_end(dp)
+
 
     # установка команд
     await set_commands(bot)

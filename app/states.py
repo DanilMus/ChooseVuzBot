@@ -21,3 +21,5 @@ class CheckState(StatesGroup):
     waiting_for_additional_info = State()
     waiting_for_additional_info_ = State()
     waiting_for_the_end = State()
+
+    waiting_for_message_from_admin = State()
