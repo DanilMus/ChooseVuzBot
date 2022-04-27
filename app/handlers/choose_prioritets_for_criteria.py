@@ -96,10 +96,10 @@ async def selected_criterion(message: types.Message, state: FSMContext):
         data['chosen_criteria'].append(int(message.text))
 
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard= True)
-    keyboard.add('Хорошо')
+    keyboard.add('Ну, ладно.')
     
-    await message.answer('Поздравляю! Осталось только дождаться результатов. \nНачинаю обработку...\n\n<i>P.s. Это займет некоторое время.</i>', reply_markup= keyboard)
-    await CheckState.waiting_for_show_rating.set()
+    await message.answer('Все! Последний пункт!', reply_markup= keyboard)
+    await CheckState.waiting_for_top.set()
 
 
 def register_prioritets_for_criteria(dp: Dispatcher):

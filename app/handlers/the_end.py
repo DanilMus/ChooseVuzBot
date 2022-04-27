@@ -46,7 +46,8 @@ async def additional_info(message: types.Message, state: FSMContext):
         user_data = await state.get_data()
         vuzes_data = user_data['vuzes_data']
         vuzes_rating_copy = user_data['vuzes_rating_copy']
-        i = len(vuzes_data) 
+        
+        i = len(vuzes_rating_copy)
 
         keyboard = types.ReplyKeyboardMarkup(resize_keyboard= True)
         keyboard.add('Дальше')

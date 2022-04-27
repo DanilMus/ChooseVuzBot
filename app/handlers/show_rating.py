@@ -86,22 +86,37 @@ async def show_rating(message: types.Message, state: FSMContext):
         '"Место": "ВУЗ и ссылка на него" - "баллы, которые набрал" '
         '- "на какое количество факультетов можешь поступить" / "из скольки"'
     )
-    await asyncio.sleep(5)
+    await asyncio.sleep(3)
     
     vuzes_rating_copy = {}
     i = len(vuzes_rating)
+    top = user_data['chosen_top']
+
     for score1 in sorted(vuzes_rating.values()):
         for vuz, score2 in vuzes_rating.items():
             if score1[0] == score2[0]:
-                await message.answer(
-                    f'{i} место: <a href="{vuzes_data[vuz][-1]}">{vuz}</a> - {round(score2[0], 1)} - {score2[1]} / {score2[2]}',
-                    disable_web_page_preview= True
-                )
-                del vuzes_rating[vuz]
-                vuzes_rating_copy[vuz] = i
+                # await message.answer(
+                #     f'{i} место: <a href="{vuzes_data[vuz][-1]}">{vuz}</a> - {round(score2[0], 1)} - {score2[1]} / {score2[2]}',
+                #     disable_web_page_preview= True
+                # )
+                vuzes_rating[vuz]
+                if i <= top:
+                    vuzes_rating_copy[vuz] = i
                 break 
         i -= 1
+        if i < 1:
+            break
         await asyncio.sleep(1)
+    
+    i = top
+    while i >= 1:
+        for vuz, place in vuzes_rating_copy.items():
+            if i == place:
+                await message.answer(
+                    f'{i} место: <a href="{vuzes_data[vuz][-1]}">{vuz}</a> - {round(vuzes_rating[vuz][0], 1)} - {vuzes_rating[vuz][1]} / {vuzes_rating[vuz][2]}',
+                    disable_web_page_preview= True
+                )
+                i -= 1
     
 
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard= True)
