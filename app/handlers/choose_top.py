@@ -29,7 +29,7 @@ async def selected_top(message: types.Message, state: FSMContext):
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard= True)
     keyboard.add('Хорошо')
     
-    await message.answer('Поздравляю! Осталось только дождаться результатов. \nНачинаю обработку...\n\n<i>P.s. Это займет некоторое время.</i>', reply_markup= keyboard)
+    await message.answer('Поздравляю! Осталось только дождаться результатов. \n\n<i>P.s. Это займет некоторое время.</i>', reply_markup= keyboard)
     await CheckState.waiting_for_show_rating.set()
 
 def register_top(dp: Dispatcher):

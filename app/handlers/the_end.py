@@ -80,6 +80,10 @@ async def additional_info_(message: types.Message, state: FSMContext):
     if i - 1 != 0:
         await state.update_data(i= i-1)
     else:
+        await asyncio.sleep(5)
+        await message.answer(
+            'Если я тебе понравился, буду рад, если расскажешь обо мне другу! Так я смогу расти и предлагать все более крутые вещи.'
+        )
         await message.answer(
             'Можешь, пожалуйста, написать все, что не понравилось? <i>(Я все равно не узнаю, кто ты, так что домой к тебе не приду))</i>',
             reply_markup= types.ReplyKeyboardRemove()

@@ -23,9 +23,10 @@ logger = logging.getLogger(__name__)
 # предложение выбора команд на выбор
 async def set_commands(bot: Bot):
     commands = [
-        BotCommand(command='/start', description='Начало работы'),
-        BotCommand(command='/finish1', description='Конец выбора ВУЗов'),
-        BotCommand(command='/finish2', description='Конец выбора предметов'),
+        BotCommand(command= '/start', description= 'Начало работы'),
+        BotCommand(command= '/finish1_0', description= 'Конец выбора ВУЗов'),
+        BotCommand(command= '/finish1_1', description= 'Выбираем все ВУЗы'),
+        BotCommand(command= '/finish2', description= 'Конец выбора предметов'),
     ]
     await bot.set_my_commands(commands)
 

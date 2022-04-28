@@ -10,6 +10,8 @@ from app.make_vuzes_rating import make_vuzes_rating
 
 
 async def show_rating(message: types.Message, state: FSMContext):
+    await message.answer('Начинаю обработку...', reply_markup= types.ReplyKeyboardRemove())
+
     user_data = await state.get_data()
     
     ####### 1 часть #########################
@@ -50,6 +52,7 @@ async def show_rating(message: types.Message, state: FSMContext):
     ####### 1.01 часть #######################
     ## (обработаем то, что ввели из базы) ####
     fromBase = user_data['chosen_vuzes_in_base']
+    print(fromBase)
     for name in fromBase:
         part_info = db_worker.get_vuz(name)
         
@@ -76,17 +79,14 @@ async def show_rating(message: types.Message, state: FSMContext):
     ###### 3 часть ###########################
     ###### (вывод рейтинга) ##################
     await message.answer(
-        'Рейтинг готов!\n'
-        'Вывод я замедлю, чтобы смотрелось эпичнее.',
+        'Рейтинг готов!\n',
         reply_markup= types.ReplyKeyboardRemove()
     )
-    await asyncio.sleep(3)
     await message.answer(
         'Вывод выглядит так:\n'
         '"Место": "ВУЗ и ссылка на него" - "баллы, которые набрал" '
         '- "на какое количество факультетов можешь поступить" / "из скольки"'
     )
-    await asyncio.sleep(3)
     
     vuzes_rating_copy = {}
     i = len(vuzes_rating)
