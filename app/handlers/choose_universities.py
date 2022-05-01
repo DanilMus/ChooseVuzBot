@@ -132,5 +132,5 @@ async def select_all_univ(message: types.Message, state: FSMContext):
 def register_choose_vuz(dp: Dispatcher):
     dp.register_message_handler(proverka_vuzes, commands= 'finish1_0', state= CheckState.waiting_for_put_vuz_in_mem) #'*')
     dp.register_message_handler(select_all_univ, commands= 'finish1_1', state= CheckState.waiting_for_put_vuz_in_mem)
-    dp.register_inline_handler(select_univ, state= CheckState.waiting_for_put_vuz_in_mem)
+    dp.register_inline_handler(select_univ, state= '*') # CheckState.waiting_for_put_vuz_in_mem)
     dp.register_message_handler(put_vuz_in_mem, state= CheckState.waiting_for_put_vuz_in_mem)

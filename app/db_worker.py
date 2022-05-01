@@ -32,12 +32,16 @@ if not(os.path.exists('data')):
     os.mkdir('data')
 
 if not(os.path.exists('data/data.json')):
-    with open('data/data.json','w',encoding='utf-8') as file:
+    with open('data/data.json', 'w', encoding='utf-8') as file:
         json.dump({}, file, indent= 4, ensure_ascii= False)
 
-if not(os.path.exists('data/users.csv')):
-    with open('data/users.csv','w',encoding='utf-8') as file:
-        pass
+if not(os.path.exists('data/users.json')):
+    with open('data/users.json', 'w', encoding='utf-8') as file:
+        json.dump({}, file, indent= 4, ensure_ascii= False)
+
+# if not(os.path.exists('data/users.csv')):
+#     with open('data/users.csv','w',encoding='utf-8') as file:
+#         pass
 
 class db_worker:
     ##########################
@@ -45,7 +49,7 @@ class db_worker:
     ##########################
     @staticmethod
     def get_vuz(name):
-        with open('data/data.json','r',encoding='utf-8') as file:
+        with open('data/data.json','r', encoding='utf-8') as file:
             data = json.load(file)
         
         vuz = data.get(name,0)
@@ -54,7 +58,7 @@ class db_worker:
 
     @staticmethod
     def get_data():
-        with open('data/data.json', 'r',encoding='utf-8') as file:
+        with open('data/data.json', 'r', encoding='utf-8') as file:
             data = json.load(file)
         
         return data
@@ -66,27 +70,27 @@ class db_worker:
         
         data[vuz_name] = [vuz_urs, 0, vuz_info]
 
-        with open('data/data.json', 'w',encoding='utf-8') as file:
+        with open('data/data.json', 'w', encoding='utf-8') as file:
             json.dump(data, file, indent= 4, ensure_ascii= False)
 
     @staticmethod
     def update_count_of_vuz(name:str):
-        with open('data/data.json', 'r',encoding='utf-8') as file:
+        with open('data/data.json', 'r', encoding='utf-8') as file:
             data = json.load(file)
         
         data[name][1] += 1
 
-        with open('data/data.json', 'w',encoding='utf-8') as file:
+        with open('data/data.json', 'w', encoding='utf-8') as file:
             json.dump(data, file, indent= 4, ensure_ascii= False)
     
     @staticmethod
     def update_info_about_vuz(name:str, info:list):
-        with open('data/data.json', 'r',encoding='utf-8') as file:
+        with open('data/data.json', 'r', encoding='utf-8') as file:
             data = json.load(file)
         
         data[name][2] = info
 
-        with open('data/data.json', 'w',encoding='utf-8') as file:
+        with open('data/data.json', 'w', encoding='utf-8') as file:
             json.dump(data, file, indent= 4, ensure_ascii= False)
 
     ###########################
@@ -94,22 +98,40 @@ class db_worker:
     ###########################
     @staticmethod
     def add_user(user_id: int):
-        with open('data/users.csv', 'a', encoding='utf-8', newline='') as file:
-            writer = csv.writer(file)
-            writer.writerow(
-                (
-                    user_id,
-                )
-            )
+        with open('data/users.json', 'r', encoding='utf-8') as file:
+            users = json.load(file)
+        
+        user_id = str(user_id)
+        users[user_id] = users.get(user_id, 0) + 1
+
+        with open('data/users.json', 'w', encoding='utf-8') as file:
+            json.dump(users, file, indent= 4, ensure_ascii= False)
+
+    # @staticmethod
+    # def add_user(user_id: int):
+    #     with open('data/users.csv', 'a', encoding='utf-8', newline='') as file:
+    #         writer = csv.writer(file)
+    #         writer.writerow(
+    #             (
+    #                 user_id,
+    #             )
+    #         )
     
     @staticmethod
     def get_users():
-        users = set()
+        with open('data/users.json','r',encoding='utf-8') as file:
+            users = json.load(file)
 
-        with open('data/users.csv', 'r', encoding='utf-8') as file:
-            reader = csv.reader(file)
-            for info in reader:
-                id = info[0]
-                users.add(id)
+        return users.keys()
+
+    # @staticmethod
+    # def get_users():
+    #     users = set()
+
+    #     with open('data/users.csv', 'r', encoding='utf-8') as file:
+    #         reader = csv.reader(file)
+    #         for info in reader:
+    #             id = info[0]
+    #             users.add(id)
         
-        return users
+    #     return users

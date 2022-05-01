@@ -47,24 +47,14 @@ async def begining(message: types.Message, state: FSMContext):
     )
     # await sleep(1)
     await message.answer(
-        '1. Можно выбрать все ВУЗы из моей базы, нажав сюда ->  /finish1_1.'
-    )
-    # await sleep(2)
-    await message.answer(
-        '2. Можно указать ВУЗ по 3 ссылкам:\n'
+        'Первый. Можно указать ВУЗ по 3 ссылкам:\n'
         'https://tabiturient.ru\n'
         'https://vuzopedia.ru\n'
         'https://ucheba.ru/for-abiturients/vuz\n'
         '<i>(Уточню, что 1 ВУЗ = 3 ссылки)</i>',
         disable_web_page_preview= True
     )
-    # await sleep(2)
-    await message.answer(
-        'Просто некоторых ВУЗов может не быть в базе, '
-        'а так ты поможешь расширить базу, '
-        'за что я буду безмерно благодарен'
-    )
-    # await sleep(3)
+    
     keyboard_inline = types.InlineKeyboardMarkup()
     keyboard_inline.add(
         types.InlineKeyboardButton(
@@ -73,8 +63,10 @@ async def begining(message: types.Message, state: FSMContext):
         )   
     )
     await message.answer(
-        '3. И последнее. '
-        'Просто посмотреть, какие ВУЗы есть в базе.',
+        'Второй. Просто посмотреть, какие ВУЗы есть в базе, и указать их.'
+    )
+    await message.answer(
+        'Третий. Можно выбрать <i>абсолютно</i> все ВУЗы из моей базы, нажав сюда ->  /finish1_1.',
         reply_markup= keyboard_inline
     )
     # await sleep(3)

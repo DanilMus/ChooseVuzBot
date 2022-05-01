@@ -7,6 +7,16 @@ from app.criteria_async.reviews import reviews
 from app.criteria_async.EGE_and_budPl import EGE_and_budPl
 from app.criteria_async.vuz_url import vuz_url
 
+from app.criteria_async.state_of_buildings import state_of_buildings
+from app.criteria_async.location_of_buildings import location_of_buildings
+from app.criteria_async.quality_of_education import quality_of_education
+from app.criteria_async.quality_of_administration import qulity_of_administration
+from app.criteria_async.additional_activities import additional_activities
+from app.criteria_async.public_catering import public_catering
+from app.criteria_async.price_of_lunch import price_of_lunch
+from app.criteria_async.price_of_way import price_of_way
+
+
 import asyncio
 import logging 
 
@@ -73,16 +83,45 @@ class VUZ:
             rating_eng = await rating_abro(self.uche)
             obsh_ = await obsh(self.tabi)
             reviews_ = await reviews(self.tabi)
+            stateOfBuildings = await state_of_buildings(self.tabi)
+            locationOfBuildings = await location_of_buildings(self.tabi)
+            qualityOfEducation = await quality_of_education(self.tabi)
+            qualityOfAdministration = await qulity_of_administration(self.tabi)
+            additionalActivities = await additional_activities(self.tabi)
+            publicCatering = await public_catering(self.tabi)
+            priceOfLunch = await price_of_lunch(self.tabi)
+            priceOfWay = await price_of_way(self.tabi)
             vuz_url_ = await vuz_url(self.tabi)
             
         except Exception as ex:
-            logger.warning('Ошибка на стороннем сервере.')
+            logger.warning(ex)
             return 'Exception'
 
         studToTeach = self.do__stt(stt_u, stt_v)
         faculties_of3max = self.do__of_3max(faculties)
 
-        return [name, faculties, faculties_of3max, militDep, studToTeach, rating_rus, rating_eng, reviews_, obsh_, vuz_url_]
+        ans = [
+            name, 
+            faculties, 
+            faculties_of3max, 
+            militDep, 
+            studToTeach, 
+            rating_rus, 
+            rating_eng, 
+            reviews_, 
+            obsh_, 
+            stateOfBuildings, 
+            locationOfBuildings, 
+            qualityOfEducation, 
+            qualityOfAdministration, 
+            additionalActivities, 
+            publicCatering, 
+            priceOfLunch, 
+            priceOfWay, 
+            vuz_url_
+        ]
+
+        return ans
     
     def full_info(self):
         return self.loop.run_until_complete(self.async_full_info())
@@ -91,9 +130,54 @@ class VUZ:
         try: 
             faculties = await EGE_and_budPl(self.vuzo, self.subj)
         except Exception as ex:
-            logger.warning('Ошибка на стороннем сервере.')
+            logger.warning(ex)
             return 'Exception'
 
         faculties_of3max = self.do__of_3max(faculties)
 
         return [faculties, faculties_of3max]
+    
+    async def async_info_to_update_base(self):
+        # try:
+        militDep = await militDepartment(self.vuzo)
+        stt_v = await studToTeach_vuzo(self.vuzo)
+        stt_u = await studToTeach_uche(self.uche)
+        rating_rus = await rating_russ(self.uche)
+        rating_eng = await rating_abro(self.uche)
+        obsh_ = await obsh(self.tabi)
+        reviews_ = await reviews(self.tabi)
+        stateOfBuildings = await state_of_buildings(self.tabi)
+        locationOfBuildings = await location_of_buildings(self.tabi)
+        qualityOfEducation = await quality_of_education(self.tabi)
+        qualityOfAdministration = await qulity_of_administration(self.tabi)
+        additionalActivities = await additional_activities(self.tabi)
+        publicCatering = await public_catering(self.tabi)
+        priceOfLunch = await price_of_lunch(self.tabi)
+        priceOfWay = await price_of_way(self.tabi)
+        vuz_url_ = await vuz_url(self.tabi)
+
+        # except Exception as ex:
+        #     logger.warning(ex)
+        #     return 'Exception'
+        
+        studToTeach = self.do__stt(stt_u, stt_v)
+
+        ans = [
+            militDep, 
+            studToTeach, 
+            rating_rus, 
+            rating_eng, 
+            reviews_, 
+            obsh_, 
+            stateOfBuildings, 
+            locationOfBuildings, 
+            qualityOfEducation, 
+            qualityOfAdministration, 
+            additionalActivities, 
+            publicCatering, 
+            priceOfLunch, 
+            priceOfWay, 
+            vuz_url_
+        ]
+
+        return ans

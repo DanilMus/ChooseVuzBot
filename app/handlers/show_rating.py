@@ -8,6 +8,9 @@ from app.vuz import VUZ
 from app.db_worker import db_worker
 from app.make_vuzes_rating import make_vuzes_rating
 
+import logging 
+
+logger = logging.getLogger(__name__)
 
 async def show_rating(message: types.Message, state: FSMContext):
     await message.answer('Начинаю обработку...', reply_markup= types.ReplyKeyboardRemove())
@@ -28,10 +31,22 @@ async def show_rating(message: types.Message, state: FSMContext):
         vuz = VUZ(tabi[i], vuzo[i], uche[i], subj)
         full_info = await vuz.async_full_info()
 
+        # обработка ошибки со сторонним сервером
         if full_info == 'Exception':
-            await message.answer('Произошла ошибка. Проблема с сервером на стороне, подожди, пожалуйста.')
-            await asyncio.sleep(100)
-            return
+            for i in range(3):
+                await message.answer('Произошла ошибка. Проблема с сервером на стороне, подожди, пожалуйста.')
+                await asyncio.sleep(100)
+                full_info = await vuz.async_full_info()
+                if full_info != 'Exception':
+                    message.answer('Проблема решена!')
+                    break
+            else:
+                await message.answer(
+                    'Прости, пожалуйста! Проблема сильнее, чем ожидалась!'
+                    'Буду рад, если дашь мне еще один шанс через некоторое время. ((('
+                )
+                logger.error('Жетская проблема парсинга.')
+                await state.finish()
 
         name = full_info[0]
         # загрузили в ответ
@@ -52,17 +67,29 @@ async def show_rating(message: types.Message, state: FSMContext):
     ####### 1.01 часть #######################
     ## (обработаем то, что ввели из базы) ####
     fromBase = user_data['chosen_vuzes_in_base']
-    print(fromBase)
+    
     for name in fromBase:
         part_info = db_worker.get_vuz(name)
         
         vuz = VUZ(part_info[0][0], part_info[0][1], part_info[0][2], subj)
         EGE_and_budPl = await vuz.async_EGE_and_budPl()
 
+        # обработка ошибки со сторонним сервером
         if EGE_and_budPl == 'Exception':
-            await message.answer('Произошла ошибка. Проблема с сервером на стороне, подожди, пожалуйста.')
-            await asyncio.sleep(100)
-            return
+            for i in range(3):
+                await message.answer('Произошла ошибка. Проблема с сервером на стороне, подожди, пожалуйста.')
+                await asyncio.sleep(100)
+                EGE_and_budPl = await vuz.async_EGE_and_budPl()
+                if EGE_and_budPl != 'Exception':
+                    message.answer('Проблема решена!')
+                    break
+            else:
+                await message.answer(
+                    'Прости, пожалуйста! Проблема сильнее, чем ожидалась!'
+                    'Буду рад, если дашь мне еще один шанс через некоторое время. ((('
+                )
+                logger.error('Жесткая проблема парсинга.')
+                await state.finish()
 
         vuzes_data[name] = EGE_and_budPl + part_info[2]
 
@@ -95,10 +122,6 @@ async def show_rating(message: types.Message, state: FSMContext):
     for score1 in sorted(vuzes_rating.values()):
         for vuz, score2 in vuzes_rating.items():
             if score1[0] == score2[0]:
-                # await message.answer(
-                #     f'{i} место: <a href="{vuzes_data[vuz][-1]}">{vuz}</a> - {round(score2[0], 1)} - {score2[1]} / {score2[2]}',
-                #     disable_web_page_preview= True
-                # )
                 vuzes_rating[vuz]
                 if i <= top:
                     vuzes_rating_copy[vuz] = i

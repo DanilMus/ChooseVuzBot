@@ -75,7 +75,7 @@ def make_vuzes_rating(criteria:list, vuzes_data:dict):
     # составление средних значений
     mid = [0] * (len_crit -1)
     for vuz_info in vuzes_data.values():
-        for i in range(len(vuz_info) -1):
+        for i in range(len(vuz_info) -1): # не включаем ссылку на сайт ВУЗа
             mid[i] += vuz_info[i]
 
     len_vuzes = len(vuzes_data)
@@ -92,6 +92,14 @@ def make_vuzes_rating(criteria:list, vuzes_data:dict):
     rating_eng_mid = mid[7]
     reviews_mid = mid[8] 
     obsh_mid = mid[9]
+    stateOfBuildings_mid = mid[10]
+    locationOfBuildings_mid = mid[11]
+    qualityOfEducation_mid = mid[12]
+    qualityOfAdministration_mid = mid[13]
+    additionalActivities_mid = mid[14]
+    publicCatering_mid = mid[15]
+    priceOfLunch_mid = mid[16]
+    priceOfWay_mid = mid[17]
 
     #  посчет рейтинга
     for vuz_name, vuz_info in vuzes_data.items(): 
@@ -105,6 +113,14 @@ def make_vuzes_rating(criteria:list, vuzes_data:dict):
         rating_eng, rating_eng_crit = vuz_info[7], criteria[8]
         reviews, reviews_crit = vuz_info[8], criteria[9]
         obsh, obsh_crit = vuz_info[9], criteria[10]
+        stateOfBuildings, stateOfBuildings_crit = vuz_info[10], criteria[11]
+        locationOfBuildings, locationOfBuildings_crit = vuz_info[11], criteria[12]
+        qualityOfEducation, qualityOfEducation_crit = vuz_info[12], criteria[13]
+        qualityOfAdministration, qualityOfAdministration_crit = vuz_info[13], criteria[14]
+        additionalActivities, additionalActivities_crit = vuz_info[14], criteria[15]
+        publicCatering, publicCatering_crit = vuz_info[15], criteria[16]
+        priceOfLunch, priceOfLunch_crit = vuz_info[16], criteria[17]
+        priceOfWay, priceOfWay_crit = vuz_info[17], criteria[18]
 
 
         score = 0
@@ -112,12 +128,54 @@ def make_vuzes_rating(criteria:list, vuzes_data:dict):
         # разделяем на:
         #   если чем больше тем лучше, то знач / ср.знач. (vuzes_data / middle)
         #   если чем меньше тем лучше, то ср.знач. / знач. (middle / vuzes_data)
-        if_bigger_thanBetter = [faculties, faculties_of3max, budPl, budPl_of3max, militDep, reviews, obsh]
-        if_lower_thanBetter = [studToTeach, rating_rus, rating_eng]
-        if_bigger_thanBetter_mid = [faculties_mid, faculties_of3max_mid, budPl_mid, budPl_of3max_mid, militDep_mid, reviews_mid, obsh_mid]
-        if_lower_thanBetter_mid =  [studToTeach_mid, rating_rus_mid, rating_eng_mid]
-        if_bigger_thanBetter_crit = [faculties_crit, faculties_of3max_crit, budPl_crit, budPl_of3max_crit, militDep_crit, reviews_crit, obsh_crit]
-        if_lower_thanBetter_crit = [studToTeach_crit, rating_rus_crit, rating_eng_crit]
+        if_bigger_thanBetter = [
+            faculties, 
+            faculties_of3max, 
+            budPl, 
+            budPl_of3max, 
+            militDep, 
+            reviews, 
+            obsh, 
+            stateOfBuildings, 
+            locationOfBuildings, 
+            qualityOfEducation, 
+            qualityOfAdministration, 
+            additionalActivities, 
+            publicCatering, 
+        ]
+        if_lower_thanBetter = [studToTeach, rating_rus, rating_eng, priceOfLunch, priceOfWay]
+        if_bigger_thanBetter_mid = [
+            faculties_mid, 
+            faculties_of3max_mid, 
+            budPl_mid, 
+            budPl_of3max_mid, 
+            militDep_mid, 
+            reviews_mid, 
+            obsh_mid, 
+            stateOfBuildings_mid, 
+            locationOfBuildings_mid, 
+            qualityOfEducation_mid, 
+            qualityOfAdministration_mid, 
+            additionalActivities_mid, 
+            publicCatering_mid, 
+        ]
+        if_lower_thanBetter_mid =  [studToTeach_mid, rating_rus_mid, rating_eng_mid, priceOfLunch_mid, priceOfWay_mid]
+        if_bigger_thanBetter_crit = [
+            faculties_crit, 
+            faculties_of3max_crit, 
+            budPl_crit, 
+            budPl_of3max_crit, 
+            militDep_crit, 
+            reviews_crit, 
+            obsh_crit, 
+            stateOfBuildings_crit, 
+            locationOfBuildings_crit, 
+            qualityOfEducation_crit, 
+            qualityOfAdministration_crit, 
+            additionalActivities_crit, 
+            publicCatering_crit, 
+        ]
+        if_lower_thanBetter_crit = [studToTeach_crit, rating_rus_crit, rating_eng_crit, priceOfLunch_crit, priceOfWay_crit]
 
         # если чем больше тем лучше, то знач / ср.знач. * приоритет (vuzes_data / middle) *  priority
         for i in range(len(if_bigger_thanBetter)):

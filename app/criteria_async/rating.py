@@ -10,17 +10,18 @@ async def rating_abro(url):
 
         vuz_rating = soup.find_all(class_='panel rating-table__rating')
 
-        rating_abro = 0
-
         for i in range(len(vuz_rating)-1,-1,-1):
             rating_name = vuz_rating[i].find(class_='rating-table__col rating-table__col--main').text
             if 'QS World University Rankings' in rating_name:
                 rating_abro = vuz_rating[i].find(class_='rating-table__col rating-table__col--world').text.strip()
                 rating_abro = rating_abro.split('-')[0] # бывает, что рейтинг 601-800
                 rating_abro = rating_abro.split('+')[0] # или +1001
-                rating_abro = int(rating_abro)
-                break
 
+                if rating_abro.isdigit():
+                    rating_abro = int(rating_abro)
+                    break
+        else:
+            rating_abro = 0
         
         return rating_abro
 
@@ -40,5 +41,5 @@ async def rating_russ(url):
                 break
         else:
             rating_russ = 0
-
+        
         return rating_russ
