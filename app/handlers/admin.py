@@ -1,3 +1,5 @@
+import asyncio
+
 from aiogram import types, Dispatcher
 from aiogram.dispatcher.storage import FSMContext
 
@@ -54,8 +56,18 @@ async def update_base(message: types.Message, state: FSMContext):
         urls = info[0]
         vuz = VUZ(urls[0],urls[1], urls[2], None)
         info_about_vuz = await vuz.async_info_to_update_base()
-        db_worker.update_info_about_vuz(name, info_about_vuz)
+        if info_about_vuz == 'Exception':
+            for i in range(3):
+                await message.answer('Видимо сервер не пускает. Надо подождать.')
+                await asyncio.sleep(100)
+                info_about_vuz = await vuz.async_info_to_update_base()
+                if info_about_vuz != 'Exception':
+                    break
+            else:
+                await message.answer('Видимо, проблема, гораздо сильнее.')
+                await state.finish()
 
+        db_worker.update_info_about_vuz(name, info_about_vuz)
 
     await message.answer('<b>Хозяин. Докладываю.</b>\nОбновление базы завершено.')
 

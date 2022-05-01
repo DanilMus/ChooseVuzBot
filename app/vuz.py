@@ -138,27 +138,27 @@ class VUZ:
         return [faculties, faculties_of3max]
     
     async def async_info_to_update_base(self):
-        # try:
-        militDep = await militDepartment(self.vuzo)
-        stt_v = await studToTeach_vuzo(self.vuzo)
-        stt_u = await studToTeach_uche(self.uche)
-        rating_rus = await rating_russ(self.uche)
-        rating_eng = await rating_abro(self.uche)
-        obsh_ = await obsh(self.tabi)
-        reviews_ = await reviews(self.tabi)
-        stateOfBuildings = await state_of_buildings(self.tabi)
-        locationOfBuildings = await location_of_buildings(self.tabi)
-        qualityOfEducation = await quality_of_education(self.tabi)
-        qualityOfAdministration = await qulity_of_administration(self.tabi)
-        additionalActivities = await additional_activities(self.tabi)
-        publicCatering = await public_catering(self.tabi)
-        priceOfLunch = await price_of_lunch(self.tabi)
-        priceOfWay = await price_of_way(self.tabi)
-        vuz_url_ = await vuz_url(self.tabi)
+        try:
+            militDep = await militDepartment(self.vuzo)
+            stt_v = await studToTeach_vuzo(self.vuzo)
+            stt_u = await studToTeach_uche(self.uche)
+            rating_rus = await rating_russ(self.uche)
+            rating_eng = await rating_abro(self.uche)
+            obsh_ = await obsh(self.tabi)
+            reviews_ = await reviews(self.tabi)
+            stateOfBuildings = await state_of_buildings(self.tabi)
+            locationOfBuildings = await location_of_buildings(self.tabi)
+            qualityOfEducation = await quality_of_education(self.tabi)
+            qualityOfAdministration = await qulity_of_administration(self.tabi)
+            additionalActivities = await additional_activities(self.tabi)
+            publicCatering = await public_catering(self.tabi)
+            priceOfLunch = await price_of_lunch(self.tabi)
+            priceOfWay = await price_of_way(self.tabi)
+            vuz_url_ = await vuz_url(self.tabi)
 
-        # except Exception as ex:
-        #     logger.warning(ex)
-        #     return 'Exception'
+        except Exception as ex:
+            logger.warning(ex)
+            return 'Exception'
         
         studToTeach = self.do__stt(stt_u, stt_v)
 
