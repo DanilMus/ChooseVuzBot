@@ -115,30 +115,29 @@ async def show_rating(message: types.Message, state: FSMContext):
         '- "на какое количество факультетов можешь поступить" / "из скольки"'
     )
     
-    vuzes_rating_copy = {}
+    vuzes_rating_copy_1 = {}
     i = len(vuzes_rating)
-    top = user_data['chosen_top']
+    top = user_data['chosen_top'] 
 
     for score1 in sorted(vuzes_rating.values()):
         for vuz, score2 in vuzes_rating.items():
             if score1[0] == score2[0]:
-                vuzes_rating[vuz]
                 if i <= top:
-                    vuzes_rating_copy[vuz] = i
+                    vuzes_rating_copy_1[vuz] = [i] + vuzes_rating[vuz]
+                del vuzes_rating[vuz]
                 break 
         i -= 1
-        if i < 1:
-            break
-        await asyncio.sleep(1)
     
+    vuzes_rating_copy_2 = {}
     i = top
     while i >= 1:
-        for vuz, place in vuzes_rating_copy.items():
-            if i == place:
+        for vuz, info in vuzes_rating_copy_1.items():
+            if i == info[0]:
                 await message.answer(
-                    f'{i} место: <a href="{vuzes_data[vuz][-1]}">{vuz}</a> - {round(vuzes_rating[vuz][0], 1)} - {vuzes_rating[vuz][1]} / {vuzes_rating[vuz][2]}',
+                    f'{i} место: <a href="{vuzes_data[vuz][-1]}">{vuz}</a> - {round(info[1], 1)} - {info[2]} / {info[3]}',
                     disable_web_page_preview= True
                 )
+                vuzes_rating_copy_2[vuz] = info[0]
                 i -= 1
     
 
@@ -151,7 +150,7 @@ async def show_rating(message: types.Message, state: FSMContext):
         reply_markup= keyboard
     )
 
-    await state.update_data(vuzes_rating_copy = vuzes_rating_copy)
+    await state.update_data(vuzes_rating_copy = vuzes_rating_copy_2)
     await CheckState.waiting_for_additional_info.set()
 
 

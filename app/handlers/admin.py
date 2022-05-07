@@ -1,4 +1,5 @@
 import asyncio
+import logging
 
 from aiogram import types, Dispatcher
 from aiogram.dispatcher.storage import FSMContext
@@ -9,7 +10,7 @@ from app.db_worker import db_worker
 from app.states import CheckState
 from app.vuz import VUZ
 
-
+logger = logging.getLogger(__name__)
 
 async def users(message: types.Message, state: FSMContext):
     await state.finish()
@@ -36,7 +37,10 @@ async def message_from_admin(message: types.Message, state: FSMContext):
     users = db_worker.get_users()
 
     for id in users:
-        await message.bot.send_message(chat_id= id, text= message.text)
+        try:
+            await message.bot.send_message(chat_id= id, text= message.text)
+        except Exception as ex:
+            logger.error(ex)
     
     await message.answer('<b>Хозяин. Докладываю.</b>\nРасслыка закончена.')
     return await state.finish()
