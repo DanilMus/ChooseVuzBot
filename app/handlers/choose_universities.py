@@ -81,13 +81,13 @@ async def proverka_vuzes(message: types.Message, state: FSMContext):
     s = ''
     for i in range(len(vuzes_from_data)):
         s += '\n' + vuzes_from_data[i]
-    await message.answer(f"Вот, что вы ввели из базы: {s}") #{' '.join(vuzes_from_data)}")
+    await message.answer(f"Вот, что ты ввел из базы: {s}") #{' '.join(vuzes_from_data)}")
 
     just_vuzes = what_user_wrote['chosen_vuzes_tabi'] + what_user_wrote['chosen_vuzes_vuzo'] + what_user_wrote['chosen_vuzes_uche']
     s = ''
     for i in range(len(just_vuzes)):
         s += '\n' + just_vuzes[i]
-    await message.answer(f"Вот, что ввели вы: {s}", disable_web_page_preview= True) #\n{' '.join(just_vuzes)}", disable_web_page_preview= True)
+    await message.answer(f"Вот, что ввел ты по ссылкам: {s}", disable_web_page_preview= True) #\n{' '.join(just_vuzes)}", disable_web_page_preview= True)
 
     tabi = what_user_wrote['chosen_vuzes_tabi']
     vuzo = what_user_wrote['chosen_vuzes_vuzo']
@@ -130,7 +130,7 @@ async def select_all_univ(message: types.Message, state: FSMContext):
 
 
 def register_choose_vuz(dp: Dispatcher):
-    dp.register_message_handler(proverka_vuzes, commands= 'finish1_0', state= CheckState.waiting_for_put_vuz_in_mem) #'*')
-    dp.register_message_handler(select_all_univ, commands= 'finish1_1', state= CheckState.waiting_for_put_vuz_in_mem)
+    dp.register_message_handler(proverka_vuzes, commands= 'finish1', state= CheckState.waiting_for_put_vuz_in_mem) #'*')
+    dp.register_message_handler(select_all_univ, commands= 'all', state= CheckState.waiting_for_put_vuz_in_mem)
     dp.register_inline_handler(select_univ, state= '*') # CheckState.waiting_for_put_vuz_in_mem)
     dp.register_message_handler(put_vuz_in_mem, state= CheckState.waiting_for_put_vuz_in_mem)

@@ -41,20 +41,23 @@ async def begining(message: types.Message, state: FSMContext):
         'Для начала, давай я узнаю, куда ты хочешь поступить.', 
         reply_markup= types.ReplyKeyboardRemove()
     )
-    # await sleep(1)
     await message.answer(
         'Есть 3 способа указать ВУЗы.'
     )
-    # await sleep(1)
     await message.answer(
-        'Первый. Можно указать ВУЗ по 3 ссылкам:\n'
+        '<b>Первый.</b>\nПросто посмотреть, какие ВУЗы есть в базе, и указать их.'
+    )
+    await message.answer(
+        '<b>Второй.</b>\nМожно указать ВУЗ по 3 ссылкам:\n'
         'https://tabiturient.ru\n'
         'https://vuzopedia.ru\n'
         'https://ucheba.ru/for-abiturients/vuz\n'
-        '<i>(Уточню, что 1 ВУЗ = 3 ссылки)</i>',
+        '<i>(Уточню, что 1 ВУЗ = 3 ссылки. Таким образом, ты поможешь пополнять базу.)</i>',
         disable_web_page_preview= True
     )
-    
+    await message.answer(
+        'Для 1 и 2 способа надо нажать -> /finish1, когда закончишь вводить <i>ВСЕ</i> ВУЗы'
+    )
     keyboard_inline = types.InlineKeyboardMarkup()
     keyboard_inline.add(
         types.InlineKeyboardButton(
@@ -63,16 +66,10 @@ async def begining(message: types.Message, state: FSMContext):
         )   
     )
     await message.answer(
-        'Второй. Просто посмотреть, какие ВУЗы есть в базе, и указать их.'
-    )
-    await message.answer(
-        'Третий. Можно выбрать <i>абсолютно</i> все ВУЗы из моей базы, нажав сюда ->  /finish1_1.',
+        '<b>Третий.</b>\nМожно выбрать <i>абсолютно</i> все ВУЗы из моей базы, нажав сюда ->  /all.',
         reply_markup= keyboard_inline
     )
-    # await sleep(3)
-    await message.answer(
-        'Для 2 и 3 способа надо нажать -> /finish1_0, когда закончишь вводить <i>ВСЕ</i> ВУЗы'
-    )
+    
 
 
     # запоминаение того, что ввел пользователь
