@@ -147,6 +147,17 @@ async def look_base_(message: types.Message, state: FSMContext):
     else:
         return message.answer('Что-то пошло не так.')
 
+async def show_urls(message: types.Message, state: CheckState):
+    data = db_worker.get_data()
+    
+    s = ''
+    for info in data.values():
+        s += info[0][0] + '\n'
+        s += info[0][1] + '\n'
+        s += info[0][2] + '\n'
+    
+    await message.answer(s)
+
 
 def register_admin(dp: Dispatcher):
     dp.register_message_handler(users, commands= 'users', state= '*')
@@ -158,3 +169,5 @@ def register_admin(dp: Dispatcher):
     
     dp.register_message_handler(look_base, commands= 'look_base', state= '*')
     dp.register_message_handler(look_base_, state= CheckState.waiting_for_look_base_)
+
+    dp.register_message_handler(show_urls, commands= 'show_urls', state= '*')
