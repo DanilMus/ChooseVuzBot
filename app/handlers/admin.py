@@ -150,13 +150,12 @@ async def look_base_(message: types.Message, state: FSMContext):
 async def show_urls(message: types.Message, state: CheckState):
     data = db_worker.get_data()
     
-    s = ''
     for info in data.values():
+        s = ''
         s += info[0][0] + '\n'
         s += info[0][1] + '\n'
         s += info[0][2] + '\n'
-    
-    await message.answer(s)
+        await message.answer(s)
 
 
 def register_admin(dp: Dispatcher):
