@@ -7,6 +7,7 @@ from config.bot_config import token
 
 # обработчики
 from app.handlers.start import register_start
+from app.handlers.search import register_search
 
 
 logger = logging.getLogger(__name__)
@@ -20,15 +21,18 @@ async def main():
 
     # иннициализация бота
     bot = Bot(token= token, parse_mode= types.ParseMode.HTML)
-    dp = Dispatcher(bot) #, storage= MemoryStorage)
+    dp = Dispatcher(bot, storage= MemoryStorage())
 
     # установка команд
-    commands = []
+    commands = [
+        types.BotCommand(command= '/start', description= 'Начало работы'),
+    ]
     await bot.set_my_commands(commands)
 
 
     # регистрация обработчиков
     await register_start(dp)
+    await register_search(dp)
 
     # начало работы
     await dp.start_polling()

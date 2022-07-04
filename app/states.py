@@ -1,4 +1,7 @@
 from aiogram.dispatcher.filters.state import StatesGroup, State
 
-class state(StatesGroup):
-    
+class states(StatesGroup):
+    start = State()
+    vuzes = State()
+    subjects = State()
+    bals = State()
