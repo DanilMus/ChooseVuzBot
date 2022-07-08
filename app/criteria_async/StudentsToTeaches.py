@@ -46,3 +46,15 @@ async def StudentsToTeaches_vuzo(url):
             stud_to_teach = 0
 
         return stud_to_teach
+
+async def StudentsToTeaches(vuzo, uche):
+    stt_v = await StudentsToTeaches_vuzo(vuzo)
+    stt_u = await StudentsToTeaches_uche(uche)
+
+    if (stt_u == 0) and (stt_v == 0):
+            return 0
+    if stt_u == 0:
+        return stt_v
+    if stt_v == 0:
+        return stt_u
+    return round((stt_u + stt_v) / 2, 1)

@@ -1,14 +1,6 @@
 from bs4 import BeautifulSoup
 import aiohttp
 
-def dict_plus_dict(a:dict, b:dict):
-    c = {}
-    for key, val in a.items():
-        c[key] = val
-    for key, val in b.items():
-        c[key] = val
-    return c
-
 def do_new_url(url, subj):
     new_url = url + '/poege/'
     if "Математика" in subj:
@@ -21,7 +13,7 @@ def do_new_url(url, subj):
         new_url += 'egeist;'
     if "Обществознание" in subj:
         new_url += 'egeobsh;'
-    if "Иностранные языки" in subj:
+    if "Иностранный язык" in subj:
         new_url += 'egeinyaz;'
     if "География" in subj:
         new_url += 'egegeorg;'
@@ -97,24 +89,33 @@ async def Faculties(url, subj):
         src = await session.get(new_url)
 
         soup = BeautifulSoup(await src.text(), 'lxml')
-
+        
         # проверка на комбинации с предметами
+        subjcombs = [] # какие предметы используются
         try: 
-            egecombs = soup.find(class_='egecombs')
+            egecombs = soup.find(class_= 'egecombs')
             egecombs = egecombs.find_all('a')
             for i in range(len(egecombs)):
+                subjcomb = egecombs[i].find_all(class_= 'cpPara')
+                for j in range(len(subjcomb)):
+                    subjcomb[j] = subjcomb[j].text.strip()
+                subjcombs.append('_'.join(subjcomb))
+
                 egecombs[i] = 'https://vuzopedia.ru/' + egecombs[i].get('href')
+
         except Exception:
             egecombs = [new_url] # если нет комбинаций, то просто обычная ссылка
-
+            subjcombs = ['_'.join(subj)]
 
         faculties = {}
-        # перебор по возможным комбинациям
-        for new_url in egecombs:
+
+        for i in range(len(egecombs)):
+            new_url = egecombs[i]
+            subjcomb = subjcombs[i]
             pages = find_pagination(soup)
             # перебор по страницам (если не будет, то просто возмет 1 стр.)
             for i in range(pages):
                 part_faculties = await Faculties_count(f'{new_url}?page={i+1}', session)
-                faculties = dict_plus_dict(faculties, part_faculties)
+                faculties[subjcomb] = part_faculties
 
         return faculties
