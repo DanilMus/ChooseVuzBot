@@ -1,16 +1,20 @@
 from aiogram import types, Dispatcher
 from aiogram.utils.callback_data import CallbackData
 from aiogram.dispatcher.storage import FSMContext
-from aiogram.dispatcher.filters import Text
 
+from app.DataBaseWorker import DataBaseWorker
 from app.states import states
+from app.vuz import VUZ
+from app.vuzes import VUZes
 
 cb = CallbackData('start', 'action')
 
 # начало
 async def start(message: types.Message, state: FSMContext):
-    await message.answer('Привет', reply_markup= types.ReplyKeyboardRemove())
     await state.finish()
+    DataBaseWorker.add_user(message.from_user.id)
+
+    await message.answer('Привет', reply_markup= types.ReplyKeyboardRemove())
 
     keyboard = types.InlineKeyboardMarkup(row_width= 1)
     buttons = [
@@ -23,6 +27,7 @@ async def start(message: types.Message, state: FSMContext):
 
 async def start_(call: types.CallbackQuery, state: FSMContext):
     await state.finish()
+    DataBaseWorker.add_user(call.message.from_user.id)
 
     keyboard = types.InlineKeyboardMarkup(row_width= 1)
     buttons = [
@@ -45,10 +50,10 @@ async def all(call: types.CallbackQuery, state: FSMContext):
     await state.update_data(vuzes_database= [])
     await state.update_data(vuzes_urls= {'tabi': [], 'vuzo': [], 'uche': []})
 
-    database = {}
+    database = DataBaseWorker.get_vuzes()
     async with state.proxy() as data:
-        for vuz in database.keys():
-            data['vuzes_database'].append(vuz)
+        for urls in database.values():
+            data['vuzes_database'].append(urls)
 
     keyboard = types.InlineKeyboardMarkup(row_width= 2)
     buttons = [
@@ -74,13 +79,13 @@ async def userself(call: types.CallbackQuery, state: FSMContext):
     keyboard.add(*buttons)
 
     await call.message.edit_text(
-        'Ты можешь выбрать ВУЗы из базы.\n'
+        'Ты можешь выбрать ВУЗы из базы.\n\n'
         'A также указать их самому по трем ссылкам с сайтов:\n'
         '<a href= "https://tabiturient.ru">tabiturient</a>\n'
         '           <a href= "https://vuzopedia.ru">vuzopedia</a>\n'
         '                       <a href= "https://ucheba.ru/for-abiturients/vuz">ucheba</a>\n'
         '!!! ВАЖНО 1 ВУЗ = 3 эти ссылки !!!\n\n'
-        'Конда закончишь указывать, нажми: Готово',
+        'Конда закончишь указывать, нажми: Все ВУЗы выбраны',
         reply_markup= keyboard,
         disable_web_page_preview= True
     )
@@ -91,12 +96,12 @@ async def userself(call: types.CallbackQuery, state: FSMContext):
 
 
 async def vuzes(message: types.Message, state: FSMContext):
-    database = {}
+    database = DataBaseWorker.get_vuzes()
 
     keyboard = types.InlineKeyboardMarkup(row_width= 2)
     buttons = [
         types.InlineKeyboardButton('Отмена', callback_data= cb.new(action = 'start')),
-        types.InlineKeyboardButton('Готово', callback_data= cb.new(action = 'check_vuzes_FROM_userself')), 
+        types.InlineKeyboardButton('Все ВУЗы выбраны', callback_data= cb.new(action = 'check_vuzes_FROM_userself')), 
         types.InlineKeyboardButton('Поиск ВУЗа в базе', switch_inline_query_current_chat= ''),
     ]
     keyboard.add(*buttons)
@@ -104,8 +109,8 @@ async def vuzes(message: types.Message, state: FSMContext):
     user_text = message.text.strip()
 
     async with state.proxy() as data:
-        if user_text in database.keys():
-            data['vuzes_database'].append(user_text)
+        if database.get(user_text):
+            data['vuzes_database'].append(database[user_text])
             len_vuzes_database = len(data['vuzes_database'])
             return await message.answer(f'Количество ВУЗов, полученных из базы: {len_vuzes_database}', reply_markup= keyboard)
         
@@ -197,7 +202,7 @@ async def subjects(call: types.CallbackQuery, state: FSMContext):
 
     await call.message.edit_text(
         'Сейчас тебе надо будет указать предметы и баллы, на которые ты их сдаешь.\n'
-        'Когда закончишь, нажми: Готово.',
+        'Когда закончишь, нажми: Предметы выбраны.',
         reply_markup= keyboard
     )
 
@@ -213,7 +218,7 @@ async def select_subjects(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
         data['subjects'].append(message.text)
     
-    await message.answer('Укажи балл, предмета:')
+    await message.answer('Укажи балл, предмета:', reply_markup= types.ReplyKeyboardRemove())
 
     await states.bals.set()
 
@@ -231,10 +236,15 @@ async def select_bals(message: types.Message, state: FSMContext):
         subject = data['subjects'][-1]
         data['subjects_bals'][subject] = user_bal
 
+    keyboard = types.ReplyKeyboardMarkup(resize_keyboard= True)
+    keyboard.add(*subj)
+
+    await message.answer('Такс', reply_markup= keyboard)
+
     keyboard = types.InlineKeyboardMarkup(row_width= 2)
     buttons = [
         types.InlineKeyboardButton('Отмена', callback_data= cb.new(action= 'check_vuzes_FROM_subjects')),
-        types.InlineKeyboardButton('Готово', callback_data= cb.new(action= 'check_subjects')), 
+        types.InlineKeyboardButton('Предметы выбраны', callback_data= cb.new(action= 'check_subjects')), 
     ]
     keyboard.add(*buttons)
     await message.answer('Предмет и балл получены.', reply_markup= keyboard)
@@ -254,7 +264,7 @@ async def check_subjects(call: types.CallbackQuery, state: FSMContext):
     data = await state.get_data()
     if not(data['subjects']):
         return await call.message.answer('Ты не указал предметы.', reply_markup= keyboard)
-
+    
 
     keyboard = types.InlineKeyboardMarkup(row_width= 2)
     buttons = [
@@ -317,8 +327,8 @@ async def additional_bals_(call: types.CallbackQuery, state: FSMContext):
 # выбор критериев
 criteria_text = [
     'Хотел бы, чтобы в ВУЗе было, как можно больше факультетов, на которые ты можешь поступить?',
-    'Важно ли большое количество бюджетных мест?',
-    'Хотел бы, чтобы баллы ВУЗов были приближены к твоим?',
+    'Важно ли большое количество бюджетных мест на факультеты, на которые ты можешь поступить?',
+    'Хотел бы, чтобы баллы факультов были приближены к твоим?',
     'Тебе все равно на какие специальности идти (1)? Или ты хочешь на более крутые (>2)?',
     'А что насчет количества бюджетных мест для крутых специальностей?',
     'А чтобы баллы крутых специальностей были приближены к твоим?',
@@ -397,13 +407,193 @@ async def select_criteria(call: types.CallbackQuery, state: FSMContext):
         keyboard = types.InlineKeyboardMarkup(row_width= 2)
         buttons = [
             types.InlineKeyboardButton('Назад', callback_data= cb.new('select_criteria_back')),
-            types.InlineKeyboardButton('Дальше', callback_data= cb.new('')),
+            types.InlineKeyboardButton('Дальше', callback_data= cb.new('make_rating')),
         ]
         keyboard.add(*buttons)
 
-        await call.message.edit_text("Пока что всё!", reply_markup= keyboard)
+        await call.message.edit_text(
+            "Все данные успешно получены.", 
+            reply_markup= keyboard
+        )
     
     await call.answer()
+
+
+
+
+
+# рейтинг
+async def make_rating(call: types.CallbackQuery, state: FSMContext):
+    # информируем пользователя
+    data = await state.get_data()
+
+    timeToDoRating = (len(data['vuzes_urls']['tabi']) + len(data['vuzes_database']))* 15 + 30
+
+    await call.message.edit_text(
+        'Осталось дождаться рейтинга, на его составление, примерно, уйдет '
+        f'{timeToDoRating // 60} мин {timeToDoRating % 60} сек'
+    )
+
+    # получаем данные введенные пользователем
+    vuzes_urls = data['vuzes_urls']
+    vuzes_database = data['vuzes_database']
+    subjects_bals = data['subjects_bals']
+    criteria = data['criteria']
+
+    # список вузов
+    vuzes = []
+
+    # обработка новых ссылок и загрузка их в базу
+    tabi, vuzo, uche = vuzes_urls['tabi'], vuzes_urls['vuzo'], vuzes_urls['uche']
+    for i in range(len(tabi)):
+        # обработка
+        vuz = VUZ(tabi[i], vuzo[i], uche[i], subjects_bals)
+        check = await vuz.start()
+        if check == Exception:
+            return call.message.edit_text(
+                'Дорогой пользователь, прошу прощения. Возникли сильные проблемы с работой программы. '
+                'Буду рад, если дашь еще один шанс чуть позже.'
+            )
+        vuzes.append(vuz)
+
+        # загрузка в базу
+        DataBaseWorker.add_vuz(vuz.name, vuz.urls)
+
+
+    # обработка ВУЗов из базы
+    for urls in vuzes_database:
+        tabi, vuzo, uche = urls['tabi'], urls['vuzo'], urls['uche']
+        # обработка
+        vuz = VUZ(tabi, vuzo, uche, subjects_bals)
+        check = await vuz.start()
+        if check == Exception:
+            return call.message.edit_text(
+                'Дорогой пользователь, прошу прощения. Возникли сильные проблемы с работой программы. '
+                'Буду рад, если дашь еще один шанс чуть позже.'
+            )
+        vuzes.append(vuz)
+
+    # создание рейтинга и топа
+    vuzes = VUZes(criteria, vuzes)
+    vuzes.rating()
+    vuzes.make_top()
+    texts_top = vuzes.texts_top
+    texts_top_MoreInfo = vuzes.texts_top_MoreInfo
+
+
+    # подготовка для показания рейтинга
+    await state.update_data(count= 0)
+    await state.update_data(texts_top= texts_top)
+    await state.update_data(texts_top_MoreInfo= texts_top_MoreInfo)
+
+
+    # информирование пользовтеля о завершении составления рейтинга
+    keyboard = types.InlineKeyboardMarkup()
+    button = types.InlineKeyboardButton('Дальше', callback_data= cb.new('show_rating'))
+    keyboard.add(button)
+
+    await call.message.edit_text('Составление рейтинга заверешено.', reply_markup= keyboard)
+
+
+
+    
+
+async def show_rating(call: types.CallbackQuery, state: FSMContext):
+    async with state.proxy() as data:
+        choice = call.data.split('_')[-1]
+        if choice == 'next':
+            data['count'] += 1
+        elif choice == 'previous':
+            data['count'] -= 1
+        count = data['count']
+        texts = data['texts_top']
+        
+
+    # показ рейтинга (по 10 вузов на странице)
+    keyboard = types.InlineKeyboardMarkup(row_width= 2)
+
+    buttons = []
+    if len(texts) > 1:
+        if count - 1 < 0:
+            buttons.append(types.InlineKeyboardButton('Вперед', callback_data= cb.new('show_rating_next')))
+        elif count + 1 > len(texts) - 1:
+            buttons.append(types.InlineKeyboardButton('Назад', callback_data= cb.new('show_rating_previous')))
+        else:
+            buttons.append(types.InlineKeyboardButton('Назад', callback_data= cb.new('show_rating_previous')))
+            buttons.append(types.InlineKeyboardButton('Вперед', callback_data= cb.new('show_rating_next')))
+    keyboard.add(*buttons)
+    buttons = []
+    buttons.append(types.InlineKeyboardButton('Закончить', callback_data= cb.new('end')))
+    buttons.append(types.InlineKeyboardButton('Больше информации', callback_data= cb.new('prepare_MoreInfo')))
+    keyboard.add(*buttons)
+    
+    await call.message.edit_text(texts[count], reply_markup= keyboard, disable_web_page_preview= True)
+    await call.answer()
+
+
+
+async def prepare_MoreInfo(call: types.CallbackQuery, state: FSMContext):
+    await state.update_data(count= 0)
+
+    keyboard = types.InlineKeyboardMarkup()
+    button = types.InlineKeyboardButton('Го', callback_data= cb.new('MoreInfo'))
+    keyboard.add(button)
+
+    await call.message.answer(
+        'Летс го?',
+        reply_markup= keyboard
+    )
+
+
+
+async def MoreInfo(call: types.CallbackQuery, state: FSMContext):
+    async with state.proxy() as data:
+        choice = call.data.split('_')[-1]
+        if choice == 'next':
+            data['count'] += 1
+        elif choice == 'previous':
+            data['count'] -= 1
+        count = data['count']
+        texts = data['texts_top_MoreInfo']
+
+
+    # показ
+    keyboard = types.InlineKeyboardMarkup(row_width= 2)
+
+    buttons = []
+    if len(texts) > 1:
+        if count - 1 < 0:
+            buttons.append(types.InlineKeyboardButton('Вперед', callback_data= cb.new('MoreInfo_next')))
+        elif count + 1 > len(texts) - 1:
+            buttons.append(types.InlineKeyboardButton('Назад', callback_data= cb.new('MoreInfo_previous')))
+        else:
+            buttons.append(types.InlineKeyboardButton('Назад', callback_data= cb.new('MoreInfo_previous')))
+            buttons.append(types.InlineKeyboardButton('Вперед', callback_data= cb.new('MoreInfo_next')))
+    keyboard.add(*buttons)  
+    buttons = []      
+    buttons.append(types.InlineKeyboardButton('Закончить', callback_data= cb.new('end')))
+    keyboard.add(*buttons)
+
+    await call.message.edit_text(texts[count], reply_markup= keyboard, disable_web_page_preview= True)
+    await call.answer()
+
+
+async def end(call: types.CallbackQuery, state: FSMContext):
+    await state.finish()
+
+    await call.message.answer(
+        'Спасибо, что воспользовался мной.\n'
+        "Если хочешь узнать больше о рейтинге, который ты получил, то тебе сюда => /about\n"
+        "Буду также благодарен, если ты оставишь свой отзыв о том, что не понравилось или что можно улучшить, по твоему мнению => /review"
+    )
+
+
+
+
+
+
+
+
 
 
 
@@ -427,3 +617,9 @@ async def register_start(dp: Dispatcher):
     # выбор критериев 
     dp.register_callback_query_handler(criteria, cb.filter(action= 'criteria'), state= '*')
     dp.register_callback_query_handler(select_criteria, cb.filter(action= ['select_criteria_', 'select_criteria_1', 'select_criteria_2', 'select_criteria_3', 'select_criteria_4', 'select_criteria_5', 'select_criteria_back']), state= '*')
+    # рейтинг
+    dp.register_callback_query_handler(make_rating, cb.filter(action= 'make_rating'), state= '*')
+    dp.register_callback_query_handler(show_rating, cb.filter(action= ['show_rating', 'show_rating_next', 'show_rating_previous']), state= '*')
+    dp.register_callback_query_handler(prepare_MoreInfo, cb.filter(action= 'prepare_MoreInfo'), state= '*')
+    dp.register_callback_query_handler(MoreInfo, cb.filter(action= ['MoreInfo', 'MoreInfo_next', 'MoreInfo_previous']), state= '*')
+    dp.register_callback_query_handler(end, cb.filter(action= 'end'), state= '*')

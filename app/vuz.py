@@ -16,7 +16,7 @@ from app.criteria_async.VuzName import VuzName
 from app.criteria_async.VuzUrl import VuzUrl
 
 
-class VUZ():
+class VUZ:
     def __init__(self, tabi, vuzo, uche, subjects_bals: dict):
         self.tabi = tabi
         self.vuzo = vuzo
@@ -30,45 +30,57 @@ class VUZ():
 
 
     async def start(self):
-        self.name = await VuzName(self.vuzo)
-        self.url = await VuzUrl(self.tabi)
+        for i in range(3):
+            try:
+                self.name = await VuzName(self.vuzo)
+                self.url = await VuzUrl(self.tabi)
 
-        self.AdditionalActivities = await AdditionalActivities(self.tabi)
-        self.Faculties = await Faculties(self.vuzo, self.subj)
-        self.HostelForStudents = await HostelForStudents(self.tabi)
-        self.LocationOfBuildings = await LocationOfBuildings(self.tabi)
-        self.MilitaryDepartment = await MilitaryDepartment(self.vuzo)
-        self.PriceOfLunch = await PriceOfLunch(self.tabi)
-        self.PriceOfWay = await PriceOfWay(self.tabi)
-        self.PublicCatering = await PublicCatering(self.tabi)
-        self.QualityOfAdministration = await QualityOfAdministration(self.tabi)
-        self.QualityOfEducation = await QualityOfEducation(self.tabi)
-        self.Rating_abro = await Rating_abro(self.uche)
-        self.Rating_russ = await Rating_russ(self.uche)
-        self.Reviews = await Reviews(self.tabi)
-        self.StateOfBuildings = await StateOfBuildings(self.tabi)
-        self.StudentsToTeaches = await StudentsToTeaches(self.vuzo, self.uche)
-    
-        self.Bals = await self. __bals(self.Faculties)
-        self.AverageBals = await self. __average_bals(self.Bals)
-        self.Buds = await self. __buds(self.Faculties)
-        self.AllBuds = await self. __all_buds(self.Buds)
+                self.AdditionalActivities = await AdditionalActivities(self.tabi)
+                self.Faculties = await Faculties(self.vuzo, self.subj)
+                self.HostelForStudents = await HostelForStudents(self.tabi)
+                self.LocationOfBuildings = await LocationOfBuildings(self.tabi)
+                self.MilitaryDepartment = await MilitaryDepartment(self.vuzo)
+                self.PriceOfLunch = await PriceOfLunch(self.tabi)
+                self.PriceOfWay = await PriceOfWay(self.tabi)
+                self.PublicCatering = await PublicCatering(self.tabi)
+                self.QualityOfAdministration = await QualityOfAdministration(self.tabi)
+                self.QualityOfEducation = await QualityOfEducation(self.tabi)
+                self.Rating_abro = await Rating_abro(self.uche)
+                self.Rating_russ = await Rating_russ(self.uche)
+                self.Reviews = await Reviews(self.tabi)
+                self.StateOfBuildings = await StateOfBuildings(self.tabi)
+                self.StudentsToTeaches = await StudentsToTeaches(self.vuzo, self.uche)
+            
+                await self.__count_ege_for_subj()
 
-        self.BestFaculties = await self. __best_faculties()
-        self.BestBals = await self. __bals(self.BestFaculties)
-        self.BestAverageBals = await self. __average_bals(self.BestBals)
-        self.BestBuds = await self. __buds(self.BestFaculties)
-        self.BestAllBuds = await self. __all_buds(self.BestBuds)
+                self.Bals = await self. __bals(self.Faculties)
+                self.BudsWhereUserCan = await self.__buds_where_user_can(self.Faculties)
+                self.CountFaculties = await self. __count_faculties(self.Bals)
+                self.BalsCloseUserBals = await self. __bals_close_user_bals(self.Bals)
 
-        self.CountFaculties = await self. __count_faculties(self.Bals)
-        self.CountBestFaculties = await self. __count_faculties(self.BestBals)
+                self.BestFaculties = await self. __best_faculties()
 
-        self.BalsCloseUserBals = await self. __bals_close_user_bals(self.Bals)
-        self.BestBalsCloseUserBals = await self. __bals_close_user_bals(self.BestBals)
+                self.BestBals = await self. __bals(self.BestFaculties)
+                self.BestBudsWhereUserCan = await self.__buds_where_user_can(self.BestFaculties)
+                self.CountBestFaculties = await self. __count_faculties(self.BestBals)
+                self.BestBalsCloseUserBals = await self. __bals_close_user_bals(self.BestBals)
+
+                return 'ok'
+
+            except Exception:
+                return Exception
 
     def count_rating(self, n: int):
         self.rating += n
 
+    @property
+    def urls(self):
+        ans = {
+            'tabi': self.tabi,
+            'vuzo': self.vuzo,
+            'uche': self.uche
+        }
+        return ans
 
 
 
@@ -76,7 +88,20 @@ class VUZ():
 
 
 
+    async def __count_ege_for_subj(self):
+        ans = {}
 
+        for subj in self.Faculties.keys():
+            ege = 0
+            subjects = subj.split('_')
+            for subject in subjects:
+                ege += self.subj_ege[subject]
+            
+            ans[subj] = ege
+        
+        self.subj_ege = ans
+
+    
     async def __bals(self, faculties: dict):
         ans = {}
         
@@ -89,37 +114,18 @@ class VUZ():
 
         return ans
     
-    async def  __average_bals(self, bals: dict):
-        ans = {}
-        for subj, info in bals.items():
-            ans[subj] = sum(info) / len(info)
+    
+    async def  __buds_where_user_can(self, faculties: dict):
+        ans = []
+        for subj, info_ in faculties.items():
+            ege = self.subj_ege[subj]
+            for info in info_.values():
+                if ege > info[0]:
+                    ans.append(info[1])
         
-        ans_ = ans.values()
-        ans_ = sum(ans_) / len(ans_)
-
-        return ans_
-
-    async def  __buds(self, faculties: dict):
-        ans = {}
-        
-        for subj in faculties.keys():
-            help = []
-            for name, info in faculties[subj].items():
-                help.append(info[1])
-            
-            ans[subj] = help
+        ans = sum(ans)
 
         return ans
-    
-    async def  __all_buds(self, buds: dict):
-        ans = {}
-        for subj, info in buds.items():
-            ans[subj] = sum(info) 
-        
-        ans_ = ans.values()
-        ans_ = sum(ans_)
-
-        return ans_
     
     async def  __best_faculties(self):
         def find_max(faculties: dict, last_maxes: list, subj: str):
@@ -151,10 +157,7 @@ class VUZ():
         count = 0
 
         for subj, info in bals.items():
-            ege = 0
-            subjects = subj.split('_')
-            for subject in subjects:
-                ege += self.subj_ege[subject]
+            ege = self.subj_ege[subj]
             
             for bal in info:
                 if ege > bal:
@@ -167,12 +170,8 @@ class VUZ():
 
         for subj, info in bals.items():
             ans[subj] = []
-            ege = 0
-            subjects = subj.split('_')
-            for subject in subjects:
-                ege += self.subj_ege[subject]
-
-            max_bal = (len(subjects)*100 + 10)
+            ege = self.subj_ege[subj]
+            max_bal = (len(subj.split('_'))*100 + 10)
             for bal in info:
                 ans[subj].append(max_bal - abs(bal - ege))
         

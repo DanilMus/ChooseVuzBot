@@ -1,8 +1,10 @@
 from aiogram import types, Dispatcher
 from aiogram.dispatcher.storage import FSMContext
 
+from app.DataBaseWorker import DataBaseWorker
+
 async def search(message_query: types.InlineQuery, state: FSMContext):
-    database = {}
+    database = DataBaseWorker.get_vuzes()
 
     if len(database.keys()) == 0:
         text = 'База находиться в стадии обновления.'

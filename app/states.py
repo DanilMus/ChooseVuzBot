@@ -5,3 +5,5 @@ class states(StatesGroup):
     vuzes = State()
     subjects = State()
     bals = State()
+
+    review = State()
