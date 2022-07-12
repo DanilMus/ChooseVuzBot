@@ -13,8 +13,9 @@ async def StudentsToTeaches_uche(url):
             name_opt = opt.find(class_='key-indicators__prop').text.strip()
             if name_opt == 'Преподавателейна 100 студентов':
                 stud_to_teach = float(opt.find(class_='key-indicators__val').text.strip()) 
-                stud_to_teach = round(100 / stud_to_teach, 2)
-                break
+                if stud_to_teach != 0: 
+                    stud_to_teach = round(100 / stud_to_teach, 2)
+                    break
         else:
             stud_to_teach = 0
 
@@ -40,8 +41,11 @@ async def StudentsToTeaches_vuzo(url):
                 teachers = int(teachers)
             else:
                 return 0
-
-            stud_to_teach = round(students / teachers, 2)
+            
+            if teachers:
+                stud_to_teach = round(students / teachers, 2)
+            else:
+                return 0
         else:
             stud_to_teach = 0
 
@@ -52,9 +56,10 @@ async def StudentsToTeaches(vuzo, uche):
     stt_u = await StudentsToTeaches_uche(uche)
 
     if (stt_u == 0) and (stt_v == 0):
-            return 0
+        return 0
     if stt_u == 0:
         return stt_v
     if stt_v == 0:
         return stt_u
+
     return round((stt_u + stt_v) / 2, 1)

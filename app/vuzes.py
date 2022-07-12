@@ -48,7 +48,7 @@ class VUZes:
                 subjects = ' '.join(subj.split('_'))
                 text += f'{subjects}: \n'
                 for faculty, bals_buds in info.items():
-                    text += f'{faculty}: {bals_buds[0]} {bals_buds[1]}'
+                    text += f'{faculty}: {bals_buds[0]} {bals_buds[1]} \n'
             
             text += f'\n'
 

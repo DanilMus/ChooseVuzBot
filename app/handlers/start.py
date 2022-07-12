@@ -467,7 +467,7 @@ async def make_rating(call: types.CallbackQuery, state: FSMContext):
         vuz = VUZ(tabi, vuzo, uche, subjects_bals)
         check = await vuz.start()
         if check == Exception:
-            return call.message.edit_text(
+            return await call.message.edit_text(
                 'Дорогой пользователь, прошу прощения. Возникли сильные проблемы с работой программы. '
                 'Буду рад, если дашь еще один шанс чуть позже.'
             )
@@ -492,7 +492,7 @@ async def make_rating(call: types.CallbackQuery, state: FSMContext):
     button = types.InlineKeyboardButton('Дальше', callback_data= cb.new('show_rating'))
     keyboard.add(button)
 
-    await call.message.edit_text('Составление рейтинга заверешено.', reply_markup= keyboard)
+    await call.message.answer('Составление рейтинга заверешено.', reply_markup= keyboard)
 
 
 
