@@ -6,6 +6,8 @@ services:
 #      - "5000:5000"
     volumes:
       - data:/data
+    enviroment:
+      - TZ= Asia/Yekaterinburg
 
 volumes:
   data:
