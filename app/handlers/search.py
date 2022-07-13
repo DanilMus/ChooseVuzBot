@@ -23,6 +23,8 @@ async def search(message_query: types.InlineQuery, state: FSMContext):
     for vuz in database.keys():
         if text_from_user.lower() in vuz.lower():
             answer.append(vuz)
+            if len(answer) > 10:
+                break
 
     articles = [
         types.InlineQueryResultArticle(

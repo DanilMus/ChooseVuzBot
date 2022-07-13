@@ -27,7 +27,6 @@ async def start(message: types.Message, state: FSMContext):
 
 async def start_(call: types.CallbackQuery, state: FSMContext):
     await state.finish()
-    DataBaseWorker.add_user(call.message.from_user.id)
 
     keyboard = types.InlineKeyboardMarkup(row_width= 1)
     buttons = [
@@ -362,7 +361,8 @@ async def criteria(call: types.CallbackQuery, state: FSMContext):
 
     await call.message.edit_text(
         f"Смотри. Сейчас я буду давать тебе разные критерии (всего {len(criteria_text)}), "
-        "прошу отметить, насколько они для тебя важны от 1 до 5",
+        "прошу отметить, насколько они для тебя важны от 1 до 5."
+        "(1 - это наименее предпочтительное, а 5 наиболее предпочтительное)",
         reply_markup= keyboard
     )
 
@@ -482,8 +482,9 @@ async def make_rating(call: types.CallbackQuery, state: FSMContext):
 
 
     # подготовка для показания рейтинга
-    await state.update_data(count= 0)
+    await state.update_data(page1= 0)
     await state.update_data(texts_top= texts_top)
+    await state.update_data(page2= 0)
     await state.update_data(texts_top_MoreInfo= texts_top_MoreInfo)
 
 
@@ -502,10 +503,10 @@ async def show_rating(call: types.CallbackQuery, state: FSMContext):
     async with state.proxy() as data:
         choice = call.data.split('_')[-1]
         if choice == 'next':
-            data['count'] += 1
+            data['page1'] += 1
         elif choice == 'previous':
-            data['count'] -= 1
-        count = data['count']
+            data['page1'] -= 1
+        count = data['page1']
         texts = data['texts_top']
         
 
@@ -533,8 +534,6 @@ async def show_rating(call: types.CallbackQuery, state: FSMContext):
 
 
 async def prepare_MoreInfo(call: types.CallbackQuery, state: FSMContext):
-    await state.update_data(count= 0)
-
     keyboard = types.InlineKeyboardMarkup()
     button = types.InlineKeyboardButton('Го', callback_data= cb.new('MoreInfo'))
     keyboard.add(button)
@@ -550,10 +549,10 @@ async def MoreInfo(call: types.CallbackQuery, state: FSMContext):
     async with state.proxy() as data:
         choice = call.data.split('_')[-1]
         if choice == 'next':
-            data['count'] += 1
+            data['page2'] += 1
         elif choice == 'previous':
-            data['count'] -= 1
-        count = data['count']
+            data['page2'] -= 1
+        count = data['page2']
         texts = data['texts_top_MoreInfo']
 
 

@@ -125,6 +125,7 @@ class VUZes:
 
         while vuzes:
             max_bal = 0
+            remem_i = 0
             for i in range(len(vuzes)):
                 bal = vuzes[i].rating
                 if bal > max_bal:

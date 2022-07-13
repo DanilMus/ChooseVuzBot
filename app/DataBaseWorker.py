@@ -30,7 +30,7 @@ class DataBaseWorker:
         with open('data/users.json','r',encoding= 'utf-8') as file:
             users = json.load(file)
 
-        return users.keys()
+        return users
 
     
     # работа с базой ВУЗов
@@ -50,21 +50,3 @@ class DataBaseWorker:
             vuzes = json.load(file)
 
         return vuzes
-
-    
-    # удалить после использования
-    @staticmethod
-    def restructure_vuzes():
-        with open('data/data.json', 'r', encoding= 'utf-8') as file:
-            vuzes = json.load(file)
-        
-        new_vuzes = {}
-        for vuz, info in vuzes.items():
-            new_vuzes[vuz] = {
-                'tabi': info[0][0],
-                'vuzo': info[0][1],
-                'uche': info[0][2]
-            }
-
-        with open('data/data.json', 'w', encoding= 'utf-8') as file:
-            json.dump(new_vuzes, file, indent= 4, ensure_ascii= False)
