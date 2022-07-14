@@ -284,15 +284,15 @@ async def additional_bals(call: types.CallbackQuery, state: FSMContext):
 
     keyboard = types.InlineKeyboardMarkup(row_width= 2)
     buttons = [
-        types.InlineKeyboardButton('Золотая медаль и ГТО', callback_data= cb.new(action= 'additional_bals_both')),
+        types.InlineKeyboardButton('Аттестат с отличием и ГТО', callback_data= cb.new(action= 'additional_bals_both')),
         types.InlineKeyboardButton('ГТО', callback_data= cb.new(action= 'additional_bals_GTO')),
-        types.InlineKeyboardButton('Золотая медаль', callback_data= cb.new(action= 'additional_bals_GoldMedal')),
+        types.InlineKeyboardButton('Аттестат с отличием', callback_data= cb.new(action= 'additional_bals_GoldMedal')),
         types.InlineKeyboardButton('Ничего', callback_data= cb.new(action= 'additional_bals_nothing')),
         types.InlineKeyboardButton('Назад', callback_data= cb.new(action= 'check_subjects')),
     ]
     keyboard.add(*buttons)
 
-    await call.message.edit_text('Сейчас я бы хотел узнать о Золотой Медали и ГТО.', reply_markup= keyboard)
+    await call.message.edit_text('Сейчас я бы хотел узнать об Аттестате с отличием и ГТО. Есть ли они?', reply_markup= keyboard)
 
     await call.answer()
 

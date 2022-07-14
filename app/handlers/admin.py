@@ -4,7 +4,7 @@ from aiogram.utils.callback_data import CallbackData
 
 from app.DataBaseWorker import DataBaseWorker
 
-from config.bot_config import admin, admin2
+from config.bot_config import admin
 
 cb = CallbackData('admin', 'action')
 
@@ -19,7 +19,7 @@ async def admin_(message: types.Message, state: FSMContext):
     keyboard = types.InlineKeyboardMarkup(row_width= 1)
     buttons = [
         types.InlineKeyboardButton('Посмортеть количество пользователей', callback_data= cb.new('users')),
-        types.InlineKeyboardButton('Посмортеть количество запусков', callback_data= cb.new('lauches'))
+        types.InlineKeyboardButton('Посмортеть количество запусков', callback_data= cb.new('launches'))
     ]
     keyboard.add(*buttons)
 
@@ -32,10 +32,7 @@ async def admin_(message: types.Message, state: FSMContext):
 
 async def admin__(call: types.CallbackQuery, state: FSMContext):
     await state.finish()
-
-    if call.message.from_user.id != admin2:
-        return await call.message.edit_text('Упс... Власть не в твоих руках.')
-
+    
 
     keyboard = types.InlineKeyboardMarkup(row_width= 1)
     buttons = [
