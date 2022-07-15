@@ -1,3 +1,4 @@
+from os import stat
 from aiogram import types, Dispatcher
 from aiogram.utils.callback_data import CallbackData
 from aiogram.dispatcher.storage import FSMContext
@@ -372,15 +373,19 @@ async def criteria(call: types.CallbackQuery, state: FSMContext):
 
 async def select_criteria(call: types.CallbackQuery, state: FSMContext):
     async with state.proxy() as data:
-        count = data['count']
-        data['count'] += 1
+        try:
+            count = data['count']
+            data['count'] += 1
 
-        choice = call.data.split('_')[-1]
-        if choice.isdigit():
-            data['criteria'][criteria_text[count-1]] = int(choice) - 1
-        elif choice == 'back':
-            count -= 2
-            data['count'] -= 2
+            choice = call.data.split('_')[-1]
+            if choice.isdigit():
+                data['criteria'][criteria_text[count-1]] = int(choice) - 1
+            elif choice == 'back':
+                count -= 2
+                data['count'] -= 2
+        except:
+            await state.finish()
+            return await call.message.answer('Возникла какая-то проблема, прошу прощения. Напиши, пожалуйста, сюда => /review')
 
 
     if count < len(criteria_text):
@@ -436,10 +441,14 @@ async def make_rating(call: types.CallbackQuery, state: FSMContext):
     )
 
     # получаем данные введенные пользователем
-    vuzes_urls = data['vuzes_urls']
-    vuzes_database = data['vuzes_database']
-    subjects_bals = data['subjects_bals']
-    criteria = data['criteria']
+    try:
+        vuzes_urls = data['vuzes_urls']
+        vuzes_database = data['vuzes_database']
+        subjects_bals = data['subjects_bals']
+        criteria = data['criteria']
+    except:
+        await state.finish()
+        return await call.message.answer('Возникла какая-то проблема, прошу прощения. Напиши, пожалуйста, сюда => /review')
 
     # список вузов
     vuzes = []
@@ -503,12 +512,16 @@ async def make_rating(call: types.CallbackQuery, state: FSMContext):
 async def show_rating(call: types.CallbackQuery, state: FSMContext):
     async with state.proxy() as data:
         choice = call.data.split('_')[-1]
-        if choice == 'next':
-            data['page1'] += 1
-        elif choice == 'previous':
-            data['page1'] -= 1
-        count = data['page1']
-        texts = data['texts_top']
+        try:
+            if choice == 'next':
+                data['page1'] += 1
+            elif choice == 'previous':
+                data['page1'] -= 1
+            count = data['page1']
+            texts = data['texts_top']
+        except:
+            await state.finish()
+            return await call.message.answer('Возникла какая-то проблема, прошу прощения. Напиши, пожалуйста, сюда => /review')
         
 
     # показ рейтинга (по 10 вузов на странице)
@@ -549,12 +562,16 @@ async def prepare_MoreInfo(call: types.CallbackQuery, state: FSMContext):
 async def MoreInfo(call: types.CallbackQuery, state: FSMContext):
     async with state.proxy() as data:
         choice = call.data.split('_')[-1]
-        if choice == 'next':
-            data['page2'] += 1
-        elif choice == 'previous':
-            data['page2'] -= 1
-        count = data['page2']
-        texts = data['texts_top_MoreInfo']
+        try:
+            if choice == 'next':
+                data['page2'] += 1
+            elif choice == 'previous':
+                data['page2'] -= 1
+            count = data['page2']
+            texts = data['texts_top_MoreInfo']
+        except:
+            await state.finish()
+            return await call.message.answer('Возникла какая-то проблема, прошу прощения. Напиши, пожалуйста, сюда => /review')
 
 
     # показ
