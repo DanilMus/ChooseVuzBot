@@ -83,7 +83,8 @@ async def userself(call: types.CallbackQuery, state: FSMContext):
         '<a href= "https://tabiturient.ru">tabiturient</a>\n'
         '           <a href= "https://vuzopedia.ru">vuzopedia</a>\n'
         '                       <a href= "https://ucheba.ru/for-abiturients/vuz">ucheba</a>\n'
-        '!!! ВАЖНО 1 ВУЗ = 3 эти ссылки !!!\n\n'
+        '!!! ВАЖНО 1 ВУЗ = 3 эти ссылки !!!\n'
+        "(Указывая ВУЗ по ссылкам, ты поможешь расширять базу.)\n\n"
         'Конда закончишь указывать, нажми: Все ВУЗы выбраны',
         reply_markup= keyboard,
         disable_web_page_preview= True
@@ -361,7 +362,7 @@ async def criteria(call: types.CallbackQuery, state: FSMContext):
 
     await call.message.edit_text(
         f"Смотри. Сейчас я буду давать тебе разные критерии (всего {len(criteria_text)}), "
-        "прошу отметить, насколько они для тебя важны от 1 до 5."
+        "прошу отметить, насколько они для тебя важны от 1 до 5.\n"
         "(1 - это наименее предпочтительное, а 5 наиболее предпочтительное)",
         reply_markup= keyboard
     )

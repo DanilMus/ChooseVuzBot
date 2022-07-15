@@ -32,7 +32,7 @@ async def admin_(message: types.Message, state: FSMContext):
 
 async def admin__(call: types.CallbackQuery, state: FSMContext):
     await state.finish()
-    
+
 
     keyboard = types.InlineKeyboardMarkup(row_width= 1)
     buttons = [
@@ -65,7 +65,7 @@ async def launches(call: types.CallbackQuery, state: FSMContext):
     button = types.InlineKeyboardButton('Назад', callback_data= cb.new('admin'))
     keyboard.add(button)
 
-    await call.message.edit_text(f'Количество пользователей: {sum(users.values())}', reply_markup= keyboard)
+    await call.message.edit_text(f'Количество запусков: {sum(users.values())}', reply_markup= keyboard)
 
 
 

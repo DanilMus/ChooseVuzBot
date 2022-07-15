@@ -1,6 +1,14 @@
 from bs4 import BeautifulSoup
 import aiohttp
 
+def dict_plus_dict(d1: dict, d2: dict):
+    d3 = {}
+    for key1, val1 in d1.items():
+        d3[key1] = val1
+    for key2, val2 in d2.items():
+        d3[key2] = val2
+    return d3
+
 def do_new_url(url, subj):
     new_url = url + '/poege/'
     if "Математика" in subj:
@@ -39,8 +47,9 @@ def find_pagination(soup):
     if pagination:
         info = pagination.find_all('li')
         for elem in info:
-            if elem.text.isdigit():
-                pagination = int(elem.text)
+            page = elem.text.strip()
+            if page.isdigit():
+                pagination = int(page)
     else:
         pagination = 1
 
@@ -116,6 +125,10 @@ async def Faculties(url, subj):
             # перебор по страницам (если не будет, то просто возмет 1 стр.)
             for i in range(pages):
                 part_faculties = await Faculties_count(f'{new_url}?page={i+1}', session)
-                faculties[subjcomb] = part_faculties
+                if i == 0:
+                    faculties[subjcomb] = part_faculties
+                else:
+                    faculties[subjcomb] = dict_plus_dict(faculties[subjcomb], part_faculties)
+
 
         return faculties
