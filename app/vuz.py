@@ -1,5 +1,6 @@
 from app.criteria_async.AdditionalActivities import AdditionalActivities 
 from app.criteria_async.Faculties import Faculties 
+from app.criteria_async.GTO_GoldMedal import GTO_GoldMedal
 from app.criteria_async.HostelForStudents import HostelForStudents 
 from app.criteria_async.LocationOfBuildings import LocationOfBuildings
 from app.criteria_async.MilitaryDepartment import MilitaryDepartment 
@@ -20,7 +21,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 class VUZ:
-    def __init__(self, tabi, vuzo, uche, subjects_bals: dict):
+    def __init__(self, tabi, vuzo, uche, subjects_bals: dict, GTO_GoldMedal):
         self.tabi = tabi
         self.vuzo = vuzo
         self.uche = uche 
@@ -29,50 +30,52 @@ class VUZ:
         self.subj = subjects_bals.keys()
         self.ege = sum(subjects_bals.values())
         self.rating = 0
+        self.GTO_GoldMedal = GTO_GoldMedal
     
 
 
     async def start(self):
-        for i in range(3):
-            try:
-                self.name = await VuzName(self.vuzo)
-                self.url = await VuzUrl(self.tabi)
+        # for i in range(3):
+        #     try:
+        self.name = await VuzName(self.vuzo)
+        self.url = await VuzUrl(self.tabi)
 
-                self.AdditionalActivities = await AdditionalActivities(self.tabi)
-                self.Faculties = await Faculties(self.vuzo, self.subj)
-                self.HostelForStudents = await HostelForStudents(self.tabi)
-                self.LocationOfBuildings = await LocationOfBuildings(self.tabi)
-                self.MilitaryDepartment = await MilitaryDepartment(self.vuzo)
-                self.PriceOfLunch = await PriceOfLunch(self.tabi)
-                self.PriceOfWay = await PriceOfWay(self.tabi)
-                self.PublicCatering = await PublicCatering(self.tabi)
-                self.QualityOfAdministration = await QualityOfAdministration(self.tabi)
-                self.QualityOfEducation = await QualityOfEducation(self.tabi)
-                self.Rating_abro = await Rating_abro(self.uche)
-                self.Rating_russ = await Rating_russ(self.uche)
-                self.Reviews = await Reviews(self.tabi)
-                self.StateOfBuildings = await StateOfBuildings(self.tabi)
-                self.StudentsToTeaches = await StudentsToTeaches(self.vuzo, self.uche)
-            
-                await self.__count_ege_for_subj()
+        self.AdditionalActivities = await AdditionalActivities(self.tabi)
+        self.Faculties = await Faculties(self.vuzo, self.subj)
+        self.GTO, self.GoldMedal = await GTO_GoldMedal(self.vuzo)
+        self.HostelForStudents = await HostelForStudents(self.tabi)
+        self.LocationOfBuildings = await LocationOfBuildings(self.tabi)
+        self.MilitaryDepartment = await MilitaryDepartment(self.vuzo)
+        self.PriceOfLunch = await PriceOfLunch(self.tabi)
+        self.PriceOfWay = await PriceOfWay(self.tabi)
+        self.PublicCatering = await PublicCatering(self.tabi)
+        self.QualityOfAdministration = await QualityOfAdministration(self.tabi)
+        self.QualityOfEducation = await QualityOfEducation(self.tabi)
+        self.Rating_abro = await Rating_abro(self.uche)
+        self.Rating_russ = await Rating_russ(self.uche)
+        self.Reviews = await Reviews(self.tabi)
+        self.StateOfBuildings = await StateOfBuildings(self.tabi)
+        self.StudentsToTeaches = await StudentsToTeaches(self.vuzo, self.uche)
+    
+        await self.__count_ege_for_subj()
 
-                self.Bals = await self. __bals(self.Faculties)
-                self.BudsWhereUserCan = await self.__buds_where_user_can(self.Faculties)
-                self.CountFaculties = await self. __count_faculties(self.Bals)
-                self.BalsCloseUserBals = await self. __bals_close_user_bals(self.Bals)
+        self.Bals = await self. __bals(self.Faculties)
+        self.BudsWhereUserCan = await self.__buds_where_user_can(self.Faculties)
+        self.CountFaculties = await self. __count_faculties(self.Bals)
+        self.BalsCloseUserBals = await self. __bals_close_user_bals(self.Bals)
 
-                self.BestFaculties = await self. __best_faculties()
+        self.BestFaculties = await self. __best_faculties()
 
-                self.BestBals = await self. __bals(self.BestFaculties)
-                self.BestBudsWhereUserCan = await self.__buds_where_user_can(self.BestFaculties)
-                self.CountBestFaculties = await self. __count_faculties(self.BestBals)
-                self.BestBalsCloseUserBals = await self. __bals_close_user_bals(self.BestBals)
+        self.BestBals = await self. __bals(self.BestFaculties)
+        self.BestBudsWhereUserCan = await self.__buds_where_user_can(self.BestFaculties)
+        self.CountBestFaculties = await self. __count_faculties(self.BestBals)
+        self.BestBalsCloseUserBals = await self. __bals_close_user_bals(self.BestBals)
 
-                return 'ok'
+            #     return 'ok'
 
-            except Exception as ex:
-                logger.warning(ex)
-                return Exception
+            # except Exception as ex:
+            #     logger.warning(ex)
+            #     return Exception
 
     def count_rating(self, n: int):
         self.rating += n
@@ -97,6 +100,11 @@ class VUZ:
 
         for subj in self.Faculties.keys():
             ege = 0
+            if 'GTO' in self.GTO_GoldMedal:
+                ege += self.GTO 
+            if 'GoldMedal' in self.GTO_GoldMedal:
+                ege += self.GoldMedal
+
             subjects = subj.split('_')
             for subject in subjects:
                 ege += self.subj_ege[subject]

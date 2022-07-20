@@ -286,7 +286,7 @@ async def additional_bals(call: types.CallbackQuery, state: FSMContext):
 
     keyboard = types.InlineKeyboardMarkup(row_width= 2)
     buttons = [
-        types.InlineKeyboardButton('Аттестат с отличием и ГТО', callback_data= cb.new(action= 'additional_bals_both')),
+        types.InlineKeyboardButton('ГТО и Аттестат с отличием', callback_data= cb.new(action= 'additional_bals_both')),
         types.InlineKeyboardButton('ГТО', callback_data= cb.new(action= 'additional_bals_GTO')),
         types.InlineKeyboardButton('Аттестат с отличием', callback_data= cb.new(action= 'additional_bals_GoldMedal')),
         types.InlineKeyboardButton('Ничего', callback_data= cb.new(action= 'additional_bals_nothing')),
@@ -330,7 +330,7 @@ criteria_text = [
     'Хотел бы, чтобы в ВУЗе было, как можно больше факультетов, на которые ты можешь поступить?',
     'Важно ли большое количество бюджетных мест на факультеты, на которые ты можешь поступить?',
     'Хотел бы, чтобы баллы факультов были приближены к твоим?',
-    'Тебе все равно на какие специальности идти (1)? Или ты хочешь на более крутые (>2)?',
+    'Тебе все равно на какие специальности идти (1)? Или ты хочешь на более крутые (>1)?',
     'А что насчет количества бюджетных мест для крутых специальностей?',
     'А чтобы баллы крутых специальностей были приближены к твоим?',
     'Поговорим об армии. Насколько тебе нужна военная кафедра?',
@@ -446,6 +446,7 @@ async def make_rating(call: types.CallbackQuery, state: FSMContext):
         vuzes_database = data['vuzes_database']
         subjects_bals = data['subjects_bals']
         criteria = data['criteria']
+        GTO_GoldMedal = data['additional_bals']
     except:
         await state.finish()
         return await call.message.answer('Возникла какая-то проблема, прошу прощения. Напиши, пожалуйста, сюда => /review')
@@ -457,7 +458,7 @@ async def make_rating(call: types.CallbackQuery, state: FSMContext):
     tabi, vuzo, uche = vuzes_urls['tabi'], vuzes_urls['vuzo'], vuzes_urls['uche']
     for i in range(len(tabi)):
         # обработка
-        vuz = VUZ(tabi[i], vuzo[i], uche[i], subjects_bals)
+        vuz = VUZ(tabi[i], vuzo[i], uche[i], subjects_bals, GTO_GoldMedal)
         check = await vuz.start()
         if check == Exception:
             return call.message.edit_text(
@@ -474,7 +475,7 @@ async def make_rating(call: types.CallbackQuery, state: FSMContext):
     for urls in vuzes_database:
         tabi, vuzo, uche = urls['tabi'], urls['vuzo'], urls['uche']
         # обработка
-        vuz = VUZ(tabi, vuzo, uche, subjects_bals)
+        vuz = VUZ(tabi, vuzo, uche, subjects_bals, GTO_GoldMedal)
         check = await vuz.start()
         if check == Exception:
             return await call.message.edit_text(

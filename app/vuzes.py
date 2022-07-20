@@ -41,6 +41,11 @@ class VUZes:
             text = ''
             text += f'<b>{i+1}. <a href= "{vuz.url}">{vuz.name}</a></b>\n\n'
 
+            if 'GTO' in vuz.GTO_GoldMedal:
+                text += f'<b>За ГТО дают {vuz.GTO}</b>\n'
+            if 'GoldMedal' in vuz.GTO_GoldMedal:
+                text += f'<b>За Аттестат с отличием дают {vuz.GoldMedal}</b>\n'
+            text += '\n'
 
             text += f'<b>Факультеты (их баллы и бюджетные места): </b>\n'
 
@@ -85,7 +90,15 @@ class VUZes:
             text += f'<b>Отзывы о ВУЗе: </b>{vuz.Reviews} \n'
 
 
-            text += f'<b>Оценка общежития: </b>{vuz.HostelForStudents} \n'
+            hostel = vuz.HostelForStudents
+            if hostel:
+                grade = round((hostel - 1) * 10, 2)
+                hostel = 'есть'
+            else:
+                hostel = 'нет или не известно'
+                grade = 0
+            text += f'<b>Общежитие: </b> {hostel} \n'
+            text += f'<b>Оценка общежития: </b>{grade} \n'
 
 
             text += f'<b>Состояния корпусов: </b>{vuz.StateOfBuildings} \n'
@@ -156,7 +169,7 @@ class VUZes:
             if self.BalsCloseUserBals:
                 bal += vuz.BalsCloseUserBals / self.BalsCloseUserBals * crit
 
-            crit = self.criteria['Тебе все равно на какие специальности идти (1)? Или ты хочешь на более крутые (>2)?']
+            crit = self.criteria['Тебе все равно на какие специальности идти (1)? Или ты хочешь на более крутые (>1)?']
             if self.CountBestFaculties:
                 bal += vuz.CountBestFaculties / self.CountBestFaculties * crit
             
