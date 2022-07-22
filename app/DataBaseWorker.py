@@ -24,6 +24,18 @@ class DataBaseWorker:
 
         with open('data/users.json', 'w', encoding= 'utf-8') as file:
             json.dump(users, file, indent= 4, ensure_ascii= False)
+
+    @staticmethod
+    def del_user(user_id: int):
+        with open('data/users.json', 'r', encoding= 'utf-8') as file:
+            users = json.load(file)
+        
+        user_id = str(user_id)
+        if users.get(user_id):
+            del users[user_id]
+
+        with open('data/users.json', 'w', encoding= 'utf-8') as file:
+            json.dump(users, file, indent= 4, ensure_ascii= False)
     
     @staticmethod
     def get_users():

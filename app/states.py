@@ -7,3 +7,5 @@ class states(StatesGroup):
     bals = State()
 
     review = State()
+
+    information = State()
