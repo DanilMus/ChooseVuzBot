@@ -263,7 +263,7 @@ async def check_subjects(call: types.CallbackQuery, state: FSMContext):
     keyboard.add(*buttons)
 
     data = await state.get_data()
-    if data.get('subjects'):
+    if not(data.get('subjects')):
         return await call.message.answer('Ты не указал предметы.', reply_markup= keyboard)
     
 
