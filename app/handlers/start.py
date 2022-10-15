@@ -263,7 +263,7 @@ async def check_subjects(call: types.CallbackQuery, state: FSMContext):
     keyboard.add(*buttons)
 
     data = await state.get_data()
-    if not(data['subjects']):
+    if data.get('subjects'):
         return await call.message.answer('Ты не указал предметы.', reply_markup= keyboard)
     
 
@@ -464,6 +464,7 @@ async def make_rating(call: types.CallbackQuery, state: FSMContext):
             return call.message.edit_text(
                 'Дорогой пользователь, прошу прощения. Возникли сильные проблемы с работой программы. '
                 'Буду рад, если дашь еще один шанс чуть позже.'
+                '\n\nЕсли проблема не рашеатся уже долго, напиши мне, пожалуйста => /review'
             )
         vuzes.append(vuz)
 
@@ -481,6 +482,7 @@ async def make_rating(call: types.CallbackQuery, state: FSMContext):
             return await call.message.edit_text(
                 'Дорогой пользователь, прошу прощения. Возникли сильные проблемы с работой программы. '
                 'Буду рад, если дашь еще один шанс чуть позже.'
+                '\n\nЕсли проблема не рашеатся уже долго, напиши мне, пожалуйста => /review'
             )
         vuzes.append(vuz)
 
