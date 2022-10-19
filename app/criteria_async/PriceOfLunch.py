@@ -7,12 +7,10 @@ async def PriceOfLunch(url):
         src = await session.get(new_url)
         soup = BeautifulSoup(await src.text(), 'lxml')
 
-        info = soup.find_all(class_='nonmobile')
-        for i in range(len(info)):
-            elem = info[i]
-            elem = elem.text.strip()
-            if elem == 'Рублей. Средняя стоимость обеда в столовой':
-                return float(info[i-2].text.strip())
-        
-        return 0
+        info = soup.find_all(class_='font4')
+        if len(info) > 9:
+            n = info[3].text.strip()
+            if n.replace('.','',1).isdigit():
+                return float(n)
 
+        return 0
